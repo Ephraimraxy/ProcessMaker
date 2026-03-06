@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     libc-client-dev \
     libkrb5-dev \
+    libssl-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
@@ -19,27 +20,38 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nodejs \
     npm \
-    && pecl install imagick redis \
-    && docker-php-ext-enable imagick redis \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip imap intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Basic PHP Extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath intl zip
+
+# Configure and Install GD (Image Processing)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd
+
+# Configure and Install IMAP (Mail)
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
+# Install PECL Extensions (Redis & Imagick)
+RUN pecl install redis imagick \
+    && docker-php-ext-enable redis imagick
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Docker CLI for script executors
-RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
-
 # Set working directory
 WORKDIR /var/www/html
+
+# Build Optimization: Install dependencies before copying the full app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files
 COPY . /var/www/html
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Complete Composer Autoload
+RUN composer dump-autoload --optimize --no-dev --no-interaction
 
 # Install Node dependencies and build assets
 RUN npm ci && npm run production
@@ -49,7 +61,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Generate key if not exists
+# Generate key if not exists (usually provided via env)
 RUN php artisan key:generate --force || true
 
 EXPOSE 9000
