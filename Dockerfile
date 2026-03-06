@@ -11,14 +11,19 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     libc-client-dev \
     libkrb5-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libwebp-dev \
+    libicu-dev \
     zip \
     unzip \
     nodejs \
     npm \
     && pecl install imagick redis \
     && docker-php-ext-enable imagick redis \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip imap \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip imap intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
