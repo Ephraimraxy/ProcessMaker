@@ -1,0 +1,239 @@
+{
+    "name": "processmaker/processmaker",
+    "version": "2026.3.1",
+    "description": "BPM PHP Software",
+    "keywords": [
+        "php bpm processmaker"
+    ],
+    "homepage": "http://processmaker.com",
+    "license": "GAGPL-3.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.3",
+        "babenkoivan/elastic-scout-driver": "^5.0",
+        "bacon/bacon-qr-code": "^2.0",
+        "codegreencreative/laravel-samlidp": "^5.2",
+        "composer/semver": "^3.4",
+        "darkaonline/l5-swagger": "^8.6",
+        "doctrine/dbal": "^4.2",
+        "fakerphp/faker": "^1.24",
+        "google/apiclient": "^2.18",
+        "guzzlehttp/guzzle": "^7.9",
+        "igaster/laravel-theme": "^2.0",
+        "jenssegers/agent": "^2.6",
+        "laravel/framework": "^11.0",
+        "laravel/horizon": "^5.30",
+        "laravel/pail": "^1.2",
+        "laravel/passport": "^13.0",
+        "laravel/scout": "^11.0",
+        "laravel/telescope": "^5.2",
+        "laravel/tinker": "^2.10",
+        "laravel/ui": "^4.6",
+        "lavary/laravel-menu": "^1.8",
+        "lcobucci/jwt": "^5.3",
+        "league/commonmark": "^3.0",
+        "mateusjunges/laravel-kafka": "^2.4",
+        "mittwald/vault-php": "^2.1",
+        "mustache/mustache": "^2.14",
+        "openai-php/client": "^1.0",
+        "openai-php/laravel": "^1.0",
+        "paragonie/sodium_compat": "^2.5",
+        "php-amqplib/php-amqplib": "^3.7",
+        "php-http/promise": "^1.2",
+        "pion/laravel-chunk-upload": "^1.5",
+        "predis/predis": "^2.3",
+        "processmaker/docker-executor-lua": "^1.0",
+        "processmaker/docker-executor-node": "1.1.0",
+        "processmaker/docker-executor-php": "1.4.0",
+        "processmaker/laravel-i18next": "dev-master",
+        "processmaker/nayra": "1.12.4",
+        "processmaker/pmql": "1.13.1",
+        "promphp/prometheus_client_php": "^2.12",
+        "psr/http-message": "^2.0",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0",
+        "pusher/pusher-php-server": "^7.2",
+        "ralouphie/getallheaders": "^3.0",
+        "robrichards/xmlseclibs": "^3.1.4",
+        "simplesoftwareio/simple-qrcode": "^5.0",
+        "spatie/laravel-fractal": "^6.3",
+        "spatie/laravel-html": "^3.11",
+        "spatie/laravel-medialibrary": "^11.11",
+        "spatie/laravel-multitenancy": "^4.0",
+        "spomky-labs/otphp": "^12.0",
+        "symfony/expression-language": "^7.2",
+        "symfony/http-foundation": "^7.3",
+        "teamtnt/laravel-scout-tntsearch-driver": "^14.0",
+        "twilio/sdk": "^9.0",
+        "typo3/class-alias-loader": "^1.2",
+        "whichbrowser/parser": "^2.1"
+    },
+    "require-dev": {
+        "filp/whoops": "^2.16",
+        "laravel/dusk": "^8.2",
+        "laravel/homestead": "^15.0",
+        "laravel/pint": "^1.13",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^12.0",
+        "spatie/laravel-ignition": "^2.9",
+        "squizlabs/php_codesniffer": "^3.11",
+        "symfony/dom-crawler": "^7.2"
+    },
+    "autoload": {
+        "files": [
+            "helpers.php"
+        ],
+        "psr-4": {
+            "ProcessMaker\\": [
+                "ProcessMaker/"
+            ],
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "laravel/dusk",
+                "laravel/passport"
+            ]
+        },
+        "google/apiclient-services": [
+            "Gmail"
+        ],
+        "processmaker": {
+            "build": "9db1c28b",
+            "cicd-enabled": true,
+            "custom": {
+                "package-ellucian-ethos": "1.19.9",
+                "paypal-package": "dev-fall",
+                "pps-adsync": "dev-fall",
+                "ps_ethos": "dev-main",
+                "package-irisbank": "dev-fall",
+                "package-pinnacle": "1.0.9",
+                "package-esign": "dev-fall",
+                "package-thermofisher": "dev-fall",
+                "package-zj-adoa": "dev-fall",
+                "pps-file-storage": "dev-fall",
+                "package-csi": "dev-fall",
+                "package-jxchange": "dev-fall",
+                "package-zjukumari-logs": "dev-fall",
+                "package-zj-wingate": "dev-fall",
+                "package-banner-sync": "dev-fall",
+                "package-service-task": "dev-fall",
+                "package-saved-search-filters": "dev-fall",
+                "package-alloy": "dev-fall",
+                "package-lesschwab": "dev-fall",
+                "package-proservice-tools": "dev-fall",
+                "package-foxley-management": "dev-fall",
+                "package-email-listener": "dev-fall",
+                "package-zj-sonymusic": "dev-fall",
+                "pm-platform": "dev-fall",
+                "package-zj-nas": "dev-fall",
+                "package-plg": "0.14.0",
+                "package-accessibility": "1.0.0",
+                "package-zj-birmingham": "dev-main",
+                "package-tce": "dev-master",
+                "package-case-overview": "dev-main",
+                "package-sis-integration": "1.0.0"
+            },
+            "enterprise": {
+                "connector-docusign": "1.11.0",
+                "connector-idp": "1.14.0",
+                "connector-pdf-print": "1.23.1",
+                "connector-send-email": "1.32.14",
+                "connector-slack": "1.9.4",
+                "docker-executor-node-ssr": "1.7.2",
+                "package-ab-testing": "1.4.0",
+                "package-actions-by-email": "1.22.10",
+                "package-advanced-user-manager": "1.13.2",
+                "package-ai": "1.16.13",
+                "package-analytics-reporting": "1.11.3",
+                "package-auth": "1.24.11",
+                "package-collections": "2.27.3",
+                "package-comments": "1.16.2",
+                "package-conversational-forms": "1.15.0",
+                "package-data-sources": "1.34.6",
+                "package-decision-engine": "1.16.1",
+                "package-dynamic-ui": "1.28.3",
+                "package-email-start-event": "1.0.9",
+                "package-files": "1.23.5",
+                "package-googleplaces": "1.12.0",
+                "package-photo-video": "1.6.1",
+                "package-pm-blocks": "1.12.7",
+                "package-process-documenter": "1.12.0",
+                "package-process-optimization": "1.10.0",
+                "package-product-analytics": "1.5.11",
+                "package-projects": "1.12.7",
+                "package-rpa": "1.1.1",
+                "package-savedsearch": "1.43.7",
+                "package-slideshow": "1.4.3",
+                "package-smart-extract": "0.0.3",
+                "package-signature": "1.15.2",
+                "package-testing": "1.8.1",
+                "package-translations": "2.14.5",
+                "package-versions": "1.13.0",
+                "package-vocabularies": "2.17.1",
+                "package-webentry": "2.29.14",
+                "package-api-testing": "1.3.1",
+                "package-variable-finder": "1.0.5",
+                "packages": "^0"
+            },
+            "docker-executors": {
+                "docker-executor-java": "1.0.5",
+                "docker-executor-python": "1.0.1",
+                "docker-executor-csharp": "1.0.2"
+            },
+            "microservices": {
+                "pmai": "fall-2023"
+            },
+            "release": "Summer 2025"
+        }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover",
+            "@php artisan processmaker:install-pre-commit-hooks"
+        ],
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup",
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan vendor:publish --provider=\"OpenAI\\Laravel\\ServiceProvider\""
+        ]
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ProcessMaker/SocialiteProviders"
+        }
+    ],
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "typo3/class-alias-loader": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-http/discovery": true,
+            "tbachert/spi": true
+        },
+        "audit": {
+            "ignore": [
+                "CVE-2026-24765"
+            ]
+        }
+    }
+}

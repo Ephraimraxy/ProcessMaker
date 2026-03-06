@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pm-horizon
+  labels:
+    app: processmaker
+    component: horizon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processmaker
+      component: horizon
+  template:
+    metadata:
+      labels:
+        app: processmaker
+        component: horizon
+    spec:
+      containers:
+      - name: horizon
+        image: your-docker-registry/processmaker-app:latest
+        command: ["php", "artisan", "horizon"]
+        envFrom:
+        - configMapRef:
+            name: pm-config
+        - secretRef:
+            name: pm-secrets
+        volumeMounts:
+        - name: storage
+          mountPath: /var/www/html/storage
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: pm-storage-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pm-echo
+  labels:
+    app: processmaker
+    component: echo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processmaker
+      component: echo
+  template:
+    metadata:
+      labels:
+        app: processmaker
+        component: echo
+    spec:
+      containers:
+      - name: echo
+        image: oanhnn/laravel-echo-server:latest
+        ports:
+        - containerPort: 6001
+        env:
+        - name: LARAVEL_ECHO_SERVER_AUTH_HOST
+          value: "http://pm-app-service"
+        - name: LARAVEL_ECHO_SERVER_DB
+          value: "redis"
+        - name: LARAVEL_ECHO_SERVER_REDIS_HOST
+          value: "pm-redis-service"
+        # Additional Env as needed...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pm-echo-service
+spec:
+  selector:
+    app: processmaker
+    component: echo
+  ports:
+  - protocol: TCP
+    port: 6001
+    targetPort: 6001
+  type: ClusterIP
