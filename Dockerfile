@@ -1,46 +1,23 @@
 FROM php:8.3-fpm-bookworm
 
-# Install system dependencies
+# Install core system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    libmagickwand-dev \
-    libc-client-dev \
-    libkrb5-dev \
-    libssl-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libwebp-dev \
-    libicu-dev \
     zip \
     unzip \
     nodejs \
     npm \
+    nginx \
+    supervisor \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Basic PHP Extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath intl zip
+# Install Official PHP Extension Installer (much more robust for Railway resource limits)
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Configure and Install GD (Image Processing)
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd
-
-# Configure and Install IMAP (Mail)
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install imap
-
-# Install PECL Extensions (Redis)
-RUN printf "\n" | pecl install redis \
-    && docker-php-ext-enable redis
-
-# Install PECL Extensions (Imagick)
-RUN apt-get update && apt-get install -y libmagickcore-6.q16-6-extra \
-    && printf "\n" | pecl install imagick \
-    && docker-php-ext-enable imagick
+# Install PHP extensions in one consolidated, optimized layer
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pdo_mysql mbstring exif pcntl bcmath intl zip gd imap redis imagick
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -68,10 +45,6 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Generate key if not exists (usually provided via env)
 RUN php artisan key:generate --force || true
-
-# Install Nginx and Supervisor
-RUN apt-get update && apt-get install -y nginx supervisor \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy configuration files
 COPY docker/nginx.conf /etc/nginx/sites-available/default
