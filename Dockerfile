@@ -34,11 +34,12 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap
 
 # Install PECL Extensions (Redis)
-RUN pecl install redis \
+RUN printf "\n" | pecl install redis \
     && docker-php-ext-enable redis
 
 # Install PECL Extensions (Imagick)
-RUN pecl install imagick \
+RUN apt-get update && apt-get install -y libmagickcore-6.q16-6-extra \
+    && printf "\n" | pecl install imagick \
     && docker-php-ext-enable imagick
 
 # Install Composer
@@ -49,16 +50,16 @@ WORKDIR /var/www/html
 
 # Build Optimization: Install dependencies before copying the full app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files
 COPY . /var/www/html
 
 # Complete Composer Autoload
-RUN composer dump-autoload --optimize --no-dev --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction
 
 # Install Node dependencies and build assets
-RUN npm ci && npm run production
+RUN npm ci && NODE_OPTIONS="--max-old-space-size=2048" npm run production
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
