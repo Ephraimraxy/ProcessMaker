@@ -4,8 +4,10 @@ FROM php:8.3-fpm-bookworm
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    wget \
     zip \
     unzip \
+    procps \
     nodejs \
     npm \
     nginx \
@@ -17,7 +19,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 # Install PHP extensions in one consolidated, optimized layer
 RUN chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions pdo_mysql mbstring exif pcntl bcmath intl zip gd imap redis imagick
+    MAKEFLAGS="-j2" install-php-extensions pdo_mysql mbstring exif pcntl bcmath intl zip gd imap redis imagick opcache
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
