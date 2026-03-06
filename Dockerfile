@@ -68,9 +68,22 @@ RUN chown -R www-data:www-data /var/www/html \
 # Generate key if not exists (usually provided via env)
 RUN php artisan key:generate --force || true
 
-EXPOSE 9000
+# Install Nginx and Supervisor
+RUN apt-get update && apt-get install -y nginx supervisor \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-CMD ["php-fpm"]
+# Copy configuration files
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create necessary directories
+RUN mkdir -p /var/log/supervisor && \
+    mkdir -p /var/run/nginx && \
+    chown -R www-data:www-data /var/log/nginx
+
+EXPOSE 80
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 
 
