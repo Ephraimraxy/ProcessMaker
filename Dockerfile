@@ -9,13 +9,15 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libmagickwand-dev \
-    libimap-dev \
+    libc-client-dev \
+    libkrb5-dev \
     zip \
     unzip \
     nodejs \
     npm \
     && pecl install imagick redis \
     && docker-php-ext-enable imagick redis \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip imap \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
