@@ -33,9 +33,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install imap
 
-# Install PECL Extensions (Redis & Imagick)
-RUN pecl install redis imagick \
-    && docker-php-ext-enable redis imagick
+# Install PECL Extensions (Redis)
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+# Install PECL Extensions (Imagick)
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
