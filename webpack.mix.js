@@ -35,7 +35,7 @@ mix.webpackConfig({
 mix.options({
   legacyNodePolyfills: false,
   terser: {
-    parallel: true,
+    parallel: false, // Disabled parallel to prevent out-of-memory errors on CI systems with many cores but limited RAM
   },
 });
 

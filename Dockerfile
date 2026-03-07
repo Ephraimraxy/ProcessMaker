@@ -16,8 +16,8 @@ COPY webpack.mix.js webpack-login.mix.js* tailwind.config.js* postcss.config.js*
 COPY resources/ resources/
 
 # Build production assets with generous memory
-RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --production || true
-RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --mix-config=webpack-login.mix.js --production || true
+RUN NODE_OPTIONS="--max-old-space-size=6144" npx mix --production
+RUN NODE_OPTIONS="--max-old-space-size=6144" npx mix --mix-config=webpack-login.mix.js --production
 
 # Create a synchronization token to force sequential execution in BuildKit
 RUN touch /app/build-done.txt
