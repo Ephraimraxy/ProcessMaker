@@ -31,7 +31,7 @@ WORKDIR /var/www/html
 # NOTE: Using 'composer update' because composer.lock is out of sync with composer.json.
 # Once lock file is regenerated and committed, switch back to 'composer install'.
 COPY composer.json composer.lock* ./
-RUN COMPOSER_MEMORY_LIMIT=-1 composer update --no-dev --no-scripts --no-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer update --ignore-platform-reqs --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files
 COPY . /var/www/html
