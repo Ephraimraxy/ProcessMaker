@@ -31,6 +31,13 @@ WORKDIR /var/www/html
 # NOTE: Using 'composer update' because composer.lock is out of sync with composer.json.
 # Once lock file is regenerated and committed, switch back to 'composer install'.
 COPY composer.json composer.lock* ./
+
+# Configure GitHub OAuth token to prevent rate limiting
+ARG GITHUB_TOKEN
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+        composer config -g github-oauth.github.com "$GITHUB_TOKEN"; \
+    fi
+
 RUN COMPOSER_MEMORY_LIMIT=-1 composer update --ignore-platform-reqs --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files
