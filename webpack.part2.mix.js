@@ -42,6 +42,31 @@ mix.then(() => {
 });
 
 mix
+    .extract([
+        "jquery",
+        "bootstrap-vue",
+        "popper.js",
+        "bootstrap",
+    ], "public/js/bootstrap-vendor.js")
+    .extract([
+        "@fortawesome/fontawesome-free",
+        "@fortawesome/fontawesome-svg-core",
+        "@fortawesome/free-brands-svg-icons",
+        "@fortawesome/free-solid-svg-icons",
+        "@fortawesome/vue-fontawesome",
+    ], "public/js/fortawesome-vendor.js")
+    .extract([
+        "jointjs",
+        "luxon",
+        "bpmn-moddle",
+        "@processmaker/modeler",
+    ], "public/js/modeler-vendor.js")
+    .extract([
+        "vue",
+        "vue-router",
+        "axios",
+        "lodash",
+    ], "public/js/vue-vendor.js")
     .js("resources/js/print-layout.js", "public/js")
     .js("resources/js/app-layout.js", "public/js")
     .js("resources/js/process-map-layout.js", "public/js")

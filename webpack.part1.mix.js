@@ -42,6 +42,7 @@ mix.then(() => {
 });
 
 mix
+    .js("resources/js/timeout.js", "public/js") // Anchors the extraction
     .extract([
         "jquery",
         "bootstrap-vue",
@@ -78,7 +79,6 @@ mix
     .copy("resources/js/components/CustomActions.vue", "public/js")
     .copy("resources/js/components/DetailRow.vue", "public/js")
     .copy("resources/js/components/FilterBar.vue", "public/js")
-    .copy("resources/js/timeout.js", "public/js")
     .copy("node_modules/@processmaker/modeler/dist/img", "public/js/img")
     .copy("node_modules/bpmn-font/dist", "public/css/bpmn-symbols");
 
