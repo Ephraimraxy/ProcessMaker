@@ -16,14 +16,14 @@ COPY webpack.part*.mix.js webpack.mix.js webpack-login.mix.js* tailwind.config.j
 COPY resources/ resources/
 
 # Build production assets in chunks to stay within Railway's 8GB limit
-# We use 4GB per process to leave room for the OS and Docker overhead
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part1.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2a.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2b.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part3.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part4.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part5.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack-login.mix.js --production
+# Consolidated into ONE RUN command to force strict serial execution in Docker BuildKit
+RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part1.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2a.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2b.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part3.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part4.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part5.mix.js --production && \
+    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack-login.mix.js --production
 
 # Create a synchronization token to force sequential execution in BuildKit
 RUN touch /app/build-done.txt
