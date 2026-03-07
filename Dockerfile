@@ -47,7 +47,8 @@ COPY . /var/www/html
 RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction --no-scripts
 
 # Install Node dependencies and build assets
-RUN npm install --legacy-peer-deps --engine-strict=false && NODE_OPTIONS="--max-old-space-size=8192" npm run production
+# (Bypassed in Docker: Webpack compiling requires >8GB RAM.
+# We will compile assets manually and push the public/ directory)
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
