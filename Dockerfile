@@ -47,7 +47,7 @@ COPY . /var/www/html
 RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction --no-scripts
 
 # Install Node dependencies and build assets
-RUN npm ci && NODE_OPTIONS="--max-old-space-size=2048" npm run production
+RUN npm install --legacy-peer-deps && NODE_OPTIONS="--max-old-space-size=2048" npm run production
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
