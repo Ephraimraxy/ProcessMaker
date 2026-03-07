@@ -19,10 +19,18 @@ COPY resources/ resources/
 RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --production || true
 RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --mix-config=webpack-login.mix.js --production || true
 
+# Create a synchronization token to force sequential execution in BuildKit
+RUN touch /app/build-done.txt
+
 # =============================================================================
 # STAGE 2: PHP runtime image
 # =============================================================================
 FROM php:8.3-fpm-bookworm
+
+# Force sequential build execution for Railway: wait for asset-builder to finish 
+# before starting PHP extensions/composer compilation. This prevents OOM errors 
+# by avoiding parallel CPU/RAM exhaustion.
+COPY --from=asset-builder /app/build-done.txt /tmp/build-done.txt
 
 # Install core system dependencies
 RUN apt-get update && apt-get install -y \
