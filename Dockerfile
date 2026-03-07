@@ -18,7 +18,8 @@ COPY resources/ resources/
 # Build production assets in chunks to stay within Railway's 8GB limit
 # We use 4GB per process to leave room for the OS and Docker overhead
 RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part1.mix.js --production
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2.mix.js --production
+RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2a.mix.js --production
+RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part2b.mix.js --production
 RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part3.mix.js --production
 RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part4.mix.js --production
 RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part5.mix.js --production
@@ -33,8 +34,8 @@ RUN touch /app/build-done.txt
 FROM php:8.3-fpm-bookworm
 
 # Force sequential build execution for Railway: wait for asset-builder to finish 
-# before starting PHP extensions/composer compilation. This prevents OOM errors 
-# by avoiding parallel CPU/RAM exhaustion.
+# before starting ANY Stage 2 steps. This prevents Stage 2 from consuming RAM 
+# while Stage 1 is still building.
 COPY --from=asset-builder /app/build-done.txt /tmp/build-done.txt
 
 # Install core system dependencies

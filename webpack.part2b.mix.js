@@ -43,36 +43,17 @@ mix.then(() => {
 
 mix
     .extract([
-        "jquery",
-        "bootstrap-vue",
-        "popper.js",
-        "bootstrap",
+        "jquery", "bootstrap-vue", "popper.js", "bootstrap",
     ], "public/js/bootstrap-vendor.js")
     .extract([
-        "@fortawesome/fontawesome-free",
-        "@fortawesome/fontawesome-svg-core",
-        "@fortawesome/free-brands-svg-icons",
-        "@fortawesome/free-solid-svg-icons",
-        "@fortawesome/vue-fontawesome",
+        "@fortawesome/fontawesome-free", "@fortawesome/fontawesome-svg-core", "@fortawesome/free-brands-svg-icons", "@fortawesome/free-solid-svg-icons", "@fortawesome/vue-fontawesome",
     ], "public/js/fortawesome-vendor.js")
     .extract([
-        "jointjs",
-        "luxon",
-        "bpmn-moddle",
-        "@processmaker/modeler",
+        "jointjs", "luxon", "bpmn-moddle", "@processmaker/modeler",
     ], "public/js/modeler-vendor.js")
     .extract([
-        "vue",
-        "vue-router",
-        "axios",
-        "lodash",
+        "vue", "vue-router", "axios", "lodash",
     ], "public/js/vue-vendor.js")
-    .js("resources/js/print-layout.js", "public/js")
-    .js("resources/js/app-layout.js", "public/js")
-    .js("resources/js/process-map-layout.js", "public/js")
-    .js("resources/js/processes/modeler/index.js", "public/js/processes/modeler")
-    .js("resources/js/processes/modeler/process-map.js", "public/js/processes/modeler")
-    .js("resources/js/processes/modeler/initialLoad.js", "public/js/processes/modeler")
     .js("resources/js/admin/auth/passwords/change.js", "public/js/admin/auth/passwords/change.js")
     .js("resources/js/admin/settings/index.js", "public/js/admin/settings")
     .js("resources/js/admin/settings/ldaplogs.js", "public/js/admin/settings")

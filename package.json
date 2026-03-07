@@ -14,7 +14,7 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "npx mix --mix-config=webpack.part1.mix.js --production && npx mix --mix-config=webpack.part2.mix.js --production && npx mix --mix-config=webpack.part3.mix.js --production && npx mix --mix-config=webpack.part4.mix.js --production && npx mix --mix-config=webpack.part5.mix.js --production && npx mix --mix-config=webpack-login.mix.js --production",
+        "production": "npx mix --mix-config=webpack.part1.mix.js --production && npx mix --mix-config=webpack.part2a.mix.js --production && npx mix --mix-config=webpack.part2b.mix.js --production && npx mix --mix-config=webpack.part3.mix.js --production && npx mix --mix-config=webpack.part4.mix.js --production && npx mix --mix-config=webpack.part5.mix.js --production && npx mix --mix-config=webpack-login.mix.js --production",
         "test": "cross-env NODE_ENV=test jest",
         "test-submission": "cross-env NODE_ENV=test jest tests/js/SubmissionDataFilter.test.js tests/js/SubmitMethod.test.js",
         "test-watch": "npm run test -- --watch --notify",
