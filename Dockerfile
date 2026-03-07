@@ -28,14 +28,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Build Optimization: Install dependencies before copying the full app
+# NOTE: Using 'composer update' because composer.lock is out of sync with composer.json.
+# Once lock file is regenerated and committed, switch back to 'composer install'.
 COPY composer.json composer.lock ./
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --no-scripts --no-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer update --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files
 COPY . /var/www/html
 
 # Complete Composer Autoload
-RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction --no-scripts
 
 # Install Node dependencies and build assets
 RUN npm ci && NODE_OPTIONS="--max-old-space-size=2048" npm run production
@@ -45,8 +47,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Generate key if not exists (usually provided via env)
-RUN php artisan key:generate --force || true
+# Note: APP_KEY should be set as a Railway environment variable, not generated at build time
 
 # Copy configuration files
 COPY docker/nginx.conf /etc/nginx/sites-available/default
