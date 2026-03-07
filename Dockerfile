@@ -1,3 +1,27 @@
+# =============================================================================
+# STAGE 1: Build frontend assets with Node 20 (needs lots of RAM for Webpack)
+# =============================================================================
+FROM node:20-bookworm AS asset-builder
+
+WORKDIR /app
+
+# Copy package files first for layer caching
+COPY package.json package-lock.json* ./
+
+# Install Node dependencies
+RUN npm install --legacy-peer-deps --engine-strict=false
+
+# Copy only the files needed for the Webpack build
+COPY webpack.mix.js webpack-login.mix.js* tailwind.config.js* postcss.config.js* ./
+COPY resources/ resources/
+
+# Build production assets with generous memory
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --production || true
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx mix --mix-config=webpack-login.mix.js --production || true
+
+# =============================================================================
+# STAGE 2: PHP runtime image
+# =============================================================================
 FROM php:8.3-fpm-bookworm
 
 # Install core system dependencies
@@ -8,8 +32,6 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     procps \
-    nodejs \
-    npm \
     nginx \
     supervisor \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -28,8 +50,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Build Optimization: Install dependencies before copying the full app
-# NOTE: Using 'composer update' because composer.lock is out of sync with composer.json.
-# Once lock file is regenerated and committed, switch back to 'composer install'.
 COPY composer.json composer.lock* ./
 
 # Configure GitHub OAuth token to prevent rate limiting
@@ -46,9 +66,13 @@ COPY . /var/www/html
 # Complete Composer Autoload
 RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction --no-scripts
 
-# Install Node dependencies and build assets
-# (Bypassed in Docker: Webpack compiling requires >8GB RAM.
-# We will compile assets manually and push the public/ directory)
+# Copy pre-built assets from the Node builder stage
+COPY --from=asset-builder /app/public/js/ /var/www/html/public/js/
+COPY --from=asset-builder /app/public/css/ /var/www/html/public/css/
+COPY --from=asset-builder /app/public/fonts/ /var/www/html/public/fonts/
+COPY --from=asset-builder /app/public/img/ /var/www/html/public/img/
+COPY --from=asset-builder /app/public/mix-manifest.json /var/www/html/public/mix-manifest.json
+COPY --from=asset-builder /app/public/vendor/ /var/www/html/public/vendor/
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -69,7 +93,3 @@ RUN mkdir -p /var/log/supervisor && \
 EXPOSE 80
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-
-
-
