@@ -1,23 +1,5 @@
 # =============================================================================
-# STAGE 1: Lightweight asset build (SASS/CSS + Monaco copies only)
-# Heavy JS assets (Parts 1-4) are pre-built and committed to the repository.
-# =============================================================================
-FROM node:20-bookworm AS asset-builder
-
-WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps --engine-strict=false
-
-COPY webpack.part5.mix.js webpack-login.mix.js* tailwind.config.js* postcss.config.js* ./
-COPY resources/ resources/
-
-# Only build Part 5 (SASS/CSS + Monaco) and login — these are lightweight
-RUN NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack.part5.mix.js --production && \
-    NODE_OPTIONS="--max-old-space-size=4096" npx mix --mix-config=webpack-login.mix.js --production
-
-# =============================================================================
-# STAGE 2: PHP runtime image
+# PHP runtime image (All JS/CSS assets are pre-built locally and committed)
 # =============================================================================
 FROM php:8.3-fpm-bookworm
 
@@ -57,22 +39,11 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then \
 
 RUN COMPOSER_MEMORY_LIMIT=-1 composer update --ignore-platform-reqs --no-dev --no-scripts --no-autoloader --no-interaction
 
-# Copy application files (includes pre-built JS/images/fonts from Parts 1-4)
+# Copy application files (includes pre-built JS/CSS/images/fonts/monaco from local build)
 COPY . /var/www/html
 
 # Complete Composer Autoload
 RUN COMPOSER_MEMORY_LIMIT=-1 composer dump-autoload --optimize --no-dev --no-interaction --no-scripts
-
-# Copy ONLY the assets produced by Part 5 + login (CSS, vendor/monaco)
-COPY --from=asset-builder /app/public/css/ /var/www/html/public/css/
-COPY --from=asset-builder /app/public/vendor/ /var/www/html/public/vendor/
-
-# Merge the Part 5 manifest entries into the pre-built manifest
-COPY --from=asset-builder /app/public/mix-manifest.json /tmp/part5-manifest.json
-RUN apt-get update && apt-get install -y jq && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    jq -s '.[0] * .[1]' /var/www/html/public/mix-manifest.json /tmp/part5-manifest.json > /tmp/merged-manifest.json && \
-    mv /tmp/merged-manifest.json /var/www/html/public/mix-manifest.json && \
-    rm /tmp/part5-manifest.json
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
