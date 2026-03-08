@@ -37,7 +37,7 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then \
         composer config -g github-oauth.github.com "$GITHUB_TOKEN"; \
     fi
 
-RUN COMPOSER_MEMORY_LIMIT=-1 composer update --ignore-platform-reqs --no-dev --no-scripts --no-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --ignore-platform-reqs --no-dev --no-scripts --no-autoloader --no-interaction
 
 # Copy application files (includes pre-built JS/CSS/images/fonts/monaco from local build)
 COPY . /var/www/html
