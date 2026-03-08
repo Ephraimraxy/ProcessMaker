@@ -72,5 +72,3 @@ mix
         require("tailwindcss"),
     ])
     .version();
-
-mix.vue({ version: 2 });
