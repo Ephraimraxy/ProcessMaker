@@ -10,27 +10,33 @@ class DebugController extends Controller
 {
     public function sessionInfo(Request $request)
     {
+        $sessionId = Session::getId();
+        $keys = \Illuminate\Support\Facades\Redis::keys('*' . $sessionId . '*');
+        
         return response()->json([
             'auth_check' => Auth::check(),
             'user' => Auth::user() ? Auth::user()->only(['id', 'username', 'email', 'status', 'is_administrator']) : null,
-            'session_id' => Session::getId(),
+            'session_id' => $sessionId,
+            'found_keys' => $keys,
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
             'ip' => $request->ip(),
+            'cache_prefix' => \Illuminate\Support\Facades\Cache::getPrefix(),
             'session_config' => [
                 'driver' => config('session.driver'),
                 'domain' => config('session.domain'),
                 'secure' => config('session.secure'),
                 'path' => config('session.path'),
                 'connection' => config('session.connection'),
+                'store' => config('session.store'),
             ],
             'redis_config' => [
                 'prefix' => config('database.redis.options.prefix'),
             ],
             'env_debug' => [
                 'REDIS_PREFIX' => env('REDIS_PREFIX', 'NOT_SET'),
+                'CACHE_PREFIX' => env('CACHE_PREFIX', 'NOT_SET'),
                 'APP_NAME' => env('APP_NAME'),
-                'SESSION_DRIVER' => env('SESSION_DRIVER'),
             ],
             'handler' => get_class(Session::getHandler()),
         ]);
