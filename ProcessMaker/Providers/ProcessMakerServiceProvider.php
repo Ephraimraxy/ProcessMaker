@@ -118,9 +118,9 @@ class ProcessMakerServiceProvider extends ServiceProvider
             });
         }
 
-        // Dusk, if env is appropriate
+        // Dusk, if env is appropriate and class exists
         // TODO Remove Dusk references and remove from composer dependencies
-        if (!$this->app->environment('production')) {
+        if (!$this->app->environment('production') && class_exists(DuskServiceProvider::class)) {
             $this->app->register(DuskServiceProvider::class);
         }
 
