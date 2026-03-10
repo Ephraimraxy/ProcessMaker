@@ -52,7 +52,7 @@ return [
 
         'landlord' => [
             'driver' => env('DB_DRIVER', 'mysql'),
-            'host' => env('DB_HOSTNAME', 'localhost'),
+            'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT'),
             'database' => env('LANDLORD_DB_DATABASE', 'landlord'),
             'username' => env('DB_USERNAME'),
