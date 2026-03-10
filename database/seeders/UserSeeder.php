@@ -33,9 +33,9 @@ class UserSeeder extends Seeder
         $adminPass = env('ADMIN_PASSWORD', self::$INSTALLER_ADMIN_PASSWORD);
         $adminEmail = env('ADMIN_EMAIL', self::$INSTALLER_ADMIN_EMAIL);
 
-        User::updateOrCreate([
+        $admin = User::where('username', $adminUser)->first() ?: new User();
+        $admin->forceFill([
             'username' => $adminUser,
-        ], [
             'password' => Hash::make($adminPass),
             'email' => $adminEmail,
             'firstname' => env('ADMIN_FIRSTNAME', self::$INSTALLER_ADMIN_FIRSTNAME),
@@ -45,13 +45,14 @@ class UserSeeder extends Seeder
             'language' => 'en',
             'timezone' => 'America/Los_Angeles',
             'datetime_format' => 'm/d/Y H:i',
-        ]);
+        ])->save();
 
         // Provision Regular User (if variable is set)
         if (env('REGULAR_USER')) {
-            User::updateOrCreate([
-                'username' => env('REGULAR_USER'),
-            ], [
+            $regUser = env('REGULAR_USER');
+            $user = User::where('username', $regUser)->first() ?: new User();
+            $user->forceFill([
+                'username' => $regUser,
                 'password' => Hash::make(env('REGULAR_PASSWORD', 'password')),
                 'email' => env('REGULAR_EMAIL', 'user@example.com'),
                 'firstname' => env('REGULAR_FIRSTNAME', 'Regular'),
@@ -61,7 +62,7 @@ class UserSeeder extends Seeder
                 'language' => 'en',
                 'timezone' => 'America/Los_Angeles',
                 'datetime_format' => 'm/d/Y H:i',
-            ]);
+            ])->save();
         }
 
         // Create clients only if they don't exist to avoid duplicate entries or crashes
