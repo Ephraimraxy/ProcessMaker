@@ -26,6 +26,12 @@ php artisan migrate --force 2>&1 || echo "WARNING: Migration failed, check logs 
 echo "=== Running database seeder ==="
 php artisan db:seed --force 2>&1 || echo "WARNING: Seeding failed, check logs above"
 
+# Setup Passport OAuth keys and clients
+echo "=== Setting up Passport ==="
+php artisan passport:keys --force 2>&1 || echo "WARNING: Passport keys failed"
+php artisan passport:client --personal --name="PmApi" --no-interaction 2>&1 || echo "WARNING: Passport personal client failed"
+php artisan passport:client --password --name="Password Grant" --provider=users --no-interaction 2>&1 || echo "WARNING: Passport password client failed"
+
 # Fix permissions AGAIN after migrate/seed created files as root
 chown -R www-data:www-data /var/www/html/storage
 chmod -R 775 /var/www/html/storage

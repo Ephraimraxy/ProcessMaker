@@ -4,9 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Passport\ClientRepository;
-use ProcessMaker\Models\Group;
-use ProcessMaker\Models\GroupMember;
 use ProcessMaker\Models\User;
 
 class UserSeeder extends Seeder
@@ -26,7 +23,7 @@ class UserSeeder extends Seeder
      *
      * @return void
      */
-    public function run(ClientRepository $clients)
+    public function run()
     {
         // Provision Admin User
         $adminUser = env('ADMIN_USER', self::$INSTALLER_ADMIN_USERNAME);
@@ -63,29 +60,6 @@ class UserSeeder extends Seeder
                 'timezone' => 'America/Los_Angeles',
                 'datetime_format' => 'm/d/Y H:i',
             ])->save();
-        }
-
-        // Create clients only if they don't exist to avoid duplicate entries or crashes
-        if (\DB::table('oauth_clients')->where('personal_access_client', 1)->count() === 0) {
-            $clients->createPersonalAccessClient(
-                null,
-                'PmApi',
-                'http://localhost'
-            );
-        }
-
-        if (\DB::table('oauth_clients')->where('password_client', 1)->count() === 0) {
-            $clients->createPasswordGrantClient(
-                null, 'Password Grant', 'http://localhost'
-            );
-        }
-
-        if (\DB::table('oauth_clients')->where('name', 'Swagger UI Auth')->count() === 0) {
-            $clients->create(
-                null,
-                'Swagger UI Auth',
-                env('APP_URL', 'http://localhost') . '/api/oauth2-callback'
-            );
         }
     }
 }
