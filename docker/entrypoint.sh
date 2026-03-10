@@ -11,5 +11,8 @@ sed -i "s/\${PORT}/${PORT}/g" /etc/nginx/sites-available/default
 # Initial setup if needed (optional)
 # php artisan migrate --force
 
+# Provision users if variables are set
+php artisan db:seed --class=UserSeeder --force
+
 # Start Supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

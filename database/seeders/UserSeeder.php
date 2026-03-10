@@ -28,31 +28,41 @@ class UserSeeder extends Seeder
      */
     public function run(ClientRepository $clients)
     {
-        //Create admin user
-        $user = User::updateOrCreate([
-            'username' => self::$INSTALLER_ADMIN_USERNAME,
-            'is_administrator' => true,
+        // Provision Admin User
+        $adminUser = env('ADMIN_USER', self::$INSTALLER_ADMIN_USERNAME);
+        $adminPass = env('ADMIN_PASSWORD', self::$INSTALLER_ADMIN_PASSWORD);
+        $adminEmail = env('ADMIN_EMAIL', self::$INSTALLER_ADMIN_EMAIL);
+
+        User::updateOrCreate([
+            'username' => $adminUser,
         ], [
-            'username' => self::$INSTALLER_ADMIN_USERNAME,
-            'password' => Hash::make(env('INSTALL_ADMIN_PASSWORD', self::$INSTALLER_ADMIN_PASSWORD)),
-            'email' => self::$INSTALLER_ADMIN_EMAIL,
-            'firstname' => self::$INSTALLER_ADMIN_FIRSTNAME,
-            'lastname' => self::$INSTALLER_ADMIN_LASTNAME,
-            'address' => null,
-            'city' => null,
-            'state' => null,
-            'postal' => null,
-            'country' => null,
-            'phone' => null,
-            'fax' => null,
-            'cell' => null,
-            'title' => null,
-            'birthdate' => null,
+            'password' => Hash::make($adminPass),
+            'email' => $adminEmail,
+            'firstname' => env('ADMIN_FIRSTNAME', self::$INSTALLER_ADMIN_FIRSTNAME),
+            'lastname' => env('ADMIN_LASTNAME', self::$INSTALLER_ADMIN_LASTNAME),
+            'is_administrator' => true,
+            'status' => 'ACTIVE',
+            'language' => 'en',
             'timezone' => 'America/Los_Angeles',
             'datetime_format' => 'm/d/Y H:i',
-            'language' => 'en',
-            'status' => 'ACTIVE',
         ]);
+
+        // Provision Regular User (if variable is set)
+        if (env('REGULAR_USER')) {
+            User::updateOrCreate([
+                'username' => env('REGULAR_USER'),
+            ], [
+                'password' => Hash::make(env('REGULAR_PASSWORD', 'password')),
+                'email' => env('REGULAR_EMAIL', 'user@example.com'),
+                'firstname' => env('REGULAR_FIRSTNAME', 'Regular'),
+                'lastname' => env('REGULAR_LASTNAME', 'User'),
+                'is_administrator' => false,
+                'status' => 'ACTIVE',
+                'language' => 'en',
+                'timezone' => 'America/Los_Angeles',
+                'datetime_format' => 'm/d/Y H:i',
+            ]);
+        }
 
         // Create client so we can generate tokens
         $clients->createPersonalAccessClient(
