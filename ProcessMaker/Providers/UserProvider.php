@@ -5,7 +5,7 @@ namespace ProcessMaker\Providers;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
-use ProcessMaker\Model\User;
+use ProcessMaker\Models\User;
 
 /**
  * Our User Provider which assists in finding users in our database

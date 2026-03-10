@@ -207,6 +207,7 @@ Route::middleware('auth', 'session_kill', 'sanitize', 'force_change_password', '
 
     Route::get('/test_status', [TestStatusController::class, 'test'])->name('test.status');
     Route::get('/test_email', [TestStatusController::class, 'email'])->name('test.email');
+    Route::get('/debug-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'sessionInfo']);
 });
 
 Route::group([
