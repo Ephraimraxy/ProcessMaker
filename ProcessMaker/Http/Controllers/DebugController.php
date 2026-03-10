@@ -27,6 +27,11 @@ class DebugController extends Controller
             'redis_config' => [
                 'prefix' => config('database.redis.options.prefix'),
             ],
+            'env_debug' => [
+                'REDIS_PREFIX' => env('REDIS_PREFIX', 'NOT_SET'),
+                'APP_NAME' => env('APP_NAME'),
+                'SESSION_DRIVER' => env('SESSION_DRIVER'),
+            ],
             'handler' => get_class(Session::getHandler()),
         ]);
     }
