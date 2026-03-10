@@ -17,8 +17,28 @@ class DebugController extends Controller
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
             'ip' => $request->ip(),
-            'secure' => $request->secure(),
+            'session_config' => [
+                'driver' => config('session.driver'),
+                'domain' => config('session.domain'),
+                'secure' => config('session.secure'),
+                'path' => config('session.path'),
+                'connection' => config('session.connection'),
+            ],
+            'redis_config' => [
+                'prefix' => config('database.redis.options.prefix'),
+            ]
         ]);
+    }
+
+    public function setRedis(Request $request)
+    {
+        \Illuminate\Support\Facades\Redis::set('cross_request_test', $request->input('val', 'sticky'));
+        return 'Redis sticky value set';
+    }
+
+    public function getRedis()
+    {
+        return 'Redis sticky value: ' . \Illuminate\Support\Facades\Redis::get('cross_request_test');
     }
 
     public function setSession(Request $request)
