@@ -26,7 +26,17 @@ class DebugController extends Controller
             ],
             'redis_config' => [
                 'prefix' => config('database.redis.options.prefix'),
-            ]
+            ],
+            'handler' => get_class(Session::getHandler()),
+        ]);
+    }
+
+    public function listRedisKeys(Request $request)
+    {
+        $keys = \Illuminate\Support\Facades\Redis::keys('*');
+        return response()->json([
+            'keys' => $keys,
+            'prefix' => config('database.redis.options.prefix'),
         ]);
     }
 
