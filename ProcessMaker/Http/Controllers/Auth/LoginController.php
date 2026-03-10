@@ -368,6 +368,8 @@ class LoginController extends Controller
                 return $user->permissions()->pluck('name')->toArray();
             });
 
+            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username);
+            
             $this->setupLanguage($request, $user);
 
             return $this->sendLoginResponse($request);

@@ -18,6 +18,13 @@ chmod -R 775 /var/www/html/storage
 chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/bootstrap/cache
 
+# Clear any stale caches
+echo "=== Clearing caches ==="
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+
 # Run migrations with visible output
 echo "=== Running migrations ==="
 php artisan migrate --force 2>&1 || echo "WARNING: Migration failed, check logs above"
