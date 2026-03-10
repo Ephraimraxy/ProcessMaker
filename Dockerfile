@@ -50,9 +50,13 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copy configuration files
+# Copy configuration files and entrypoint
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Set permissions
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Create necessary directories
 RUN mkdir -p /var/log/supervisor && \
@@ -61,4 +65,4 @@ RUN mkdir -p /var/log/supervisor && \
 
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
