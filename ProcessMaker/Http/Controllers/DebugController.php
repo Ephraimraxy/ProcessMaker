@@ -80,6 +80,26 @@ class DebugController extends Controller
         ]);
     }
 
+    public function deepDebug(Request $request)
+    {
+        $id = Session::getId();
+        $store = Session::getHandler();
+        $cache = \Illuminate\Support\Facades\Cache::store(config('session.store'));
+        
+        $sessionWrite = session()->put('deep_test', 'works-' . time());
+        $cacheWrite = $cache->put('cache_test', 'works-' . time(), 60);
+        
+        return response()->json([
+            'session_id' => $id,
+            'handler' => get_class($store),
+            'cache_prefix' => $cache->getPrefix(),
+            'session_data_before_save' => session()->all(),
+            'session_save_result' => session()->save(),
+            'cache_read_back' => $cache->get('cache_test'),
+            'redis_keys_matching_id' => \Illuminate\Support\Facades\Redis::keys('*' . $id . '*'),
+        ]);
+    }
+
     public function getSession(Request $request)
     {
         return response()->json([

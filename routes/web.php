@@ -212,6 +212,7 @@ Route::middleware('auth', 'session_kill', 'sanitize', 'force_change_password', '
 Route::get('/debug-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'sessionInfo']);
 Route::get('/set-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'setSession']);
 Route::get('/get-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'getSession']);
+Route::get('/deep-debug', [\ProcessMaker\Http\Controllers\DebugController::class, 'deepDebug']);
 Route::get('/redis-set', [\ProcessMaker\Http\Controllers\DebugController::class, 'setRedis']);
 Route::get('/redis-get', [\ProcessMaker\Http\Controllers\DebugController::class, 'getRedis']);
 Route::get('/redis-flush', [\ProcessMaker\Http\Controllers\DebugController::class, 'flushAll']);
