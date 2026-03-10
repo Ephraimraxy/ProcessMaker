@@ -214,6 +214,7 @@ Route::get('/set-session', [\ProcessMaker\Http\Controllers\DebugController::clas
 Route::get('/get-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'getSession']);
 Route::get('/redis-set', [\ProcessMaker\Http\Controllers\DebugController::class, 'setRedis']);
 Route::get('/redis-get', [\ProcessMaker\Http\Controllers\DebugController::class, 'getRedis']);
+Route::get('/redis-flush', [\ProcessMaker\Http\Controllers\DebugController::class, 'flushAll']);
 Route::get('/list-keys', [\ProcessMaker\Http\Controllers\DebugController::class, 'listRedisKeys']);
 Route::get('/test-redis', function() {
     try {

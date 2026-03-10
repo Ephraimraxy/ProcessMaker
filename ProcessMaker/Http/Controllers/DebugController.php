@@ -56,6 +56,12 @@ class DebugController extends Controller
         return 'Redis sticky value: ' . \Illuminate\Support\Facades\Redis::get('cross_request_test');
     }
 
+    public function flushAll()
+    {
+        \Illuminate\Support\Facades\Redis::connection()->flushall();
+        return 'Redis flushed successfully';
+    }
+
     public function setSession(Request $request)
     {
         $val = $request->input('val', 'persistent-value');
