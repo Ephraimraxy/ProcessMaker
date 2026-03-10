@@ -8,8 +8,8 @@ fi
 # Apply the port to the nginx configuration
 sed -i "s/\${PORT}/${PORT}/g" /etc/nginx/sites-available/default
 
-# Initial setup if needed (optional)
-# php artisan migrate --force
+# Initial setup if needed
+php artisan migrate --force
 
 # Provision users if variables are set
 php artisan db:seed --class=UserSeeder --force

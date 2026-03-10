@@ -64,23 +64,27 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        // Create client so we can generate tokens
-        $clients->createPersonalAccessClient(
-            null,
-            'PmApi',
-            'http://localhost'
-        );
+        // Create clients only if they don't exist to avoid duplicate entries or crashes
+        if (\DB::table('oauth_clients')->where('personal_access_client', 1)->count() === 0) {
+            $clients->createPersonalAccessClient(
+                null,
+                'PmApi',
+                'http://localhost'
+            );
+        }
 
-        // Create client OAuth (for 3-legged auth)
-        $clients->create(
-            null,
-            'Swagger UI Auth',
-            env('APP_URL', 'http://localhost') . '/api/oauth2-callback'
-        );
+        if (\DB::table('oauth_clients')->where('password_client', 1)->count() === 0) {
+            $clients->createPasswordGrantClient(
+                null, 'Password Grant', 'http://localhost'
+            );
+        }
 
-        // Allow users get at token using the password grant flow
-        $clients->createPasswordGrantClient(
-            null, 'Password Grant', 'http://localhost'
-        );
+        if (\DB::table('oauth_clients')->where('name', 'Swagger UI Auth')->count() === 0) {
+            $clients->create(
+                null,
+                'Swagger UI Auth',
+                env('APP_URL', 'http://localhost') . '/api/oauth2-callback'
+            );
+        }
     }
 }
