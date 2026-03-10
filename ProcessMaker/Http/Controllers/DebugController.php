@@ -80,6 +80,29 @@ class DebugController extends Controller
         ]);
     }
 
+    public function scanRedis()
+    {
+        $results = [];
+        $originalDb = config('database.redis.default.database', 0);
+        
+        for ($i = 0; $i < 4; $i++) { // Check first 4 DBs
+            try {
+                \Illuminate\Support\Facades\Redis::connection()->select($i);
+                $keys = \Illuminate\Support\Facades\Redis::connection()->keys('*');
+                $results["db_$i"] = $keys;
+            } catch (\Exception $e) {
+                $results["error_db_$i"] = $e->getMessage();
+            }
+        }
+        
+        // Reset to original
+        try {
+            \Illuminate\Support\Facades\Redis::connection()->select($originalDb);
+        } catch (\Exception $e) {}
+
+        return response()->json($results);
+    }
+
     public function deepDebug(Request $request)
     {
         $id = Session::getId();
