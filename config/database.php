@@ -36,7 +36,7 @@ return [
     'connections' => [
         'processmaker' => [
             'driver' => env('DB_DRIVER', 'mysql'),
-            'host' => env('DB_HOSTNAME', '127.0.0.1'),
+            'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'processmaker'),
             'username' => env('DB_USERNAME', 'homestead'),
@@ -107,7 +107,7 @@ return [
         'default' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME', env('REDIS_USER')),
+            'username' => env('REDIS_USERNAME', env('REDISUSER')),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
@@ -116,7 +116,7 @@ return [
         'cache' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME', env('REDIS_USER')),
+            'username' => env('REDIS_USERNAME', env('REDISUSER')),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
@@ -125,7 +125,7 @@ return [
         'cache_settings' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME', env('REDIS_USER')),
+            'username' => env('REDIS_USERNAME', env('REDISUSER')),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_SETTING_DB', '2'),
