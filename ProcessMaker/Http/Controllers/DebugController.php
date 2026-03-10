@@ -16,10 +16,29 @@ class DebugController extends Controller
             'session_id' => Session::getId(),
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
-            'headers' => $request->headers->all(),
             'ip' => $request->ip(),
             'secure' => $request->secure(),
-            'url' => $request->fullUrl(),
+        ]);
+    }
+
+    public function setSession(Request $request)
+    {
+        $val = $request->input('val', 'persistent-value');
+        $request->session()->put('debug_key', $val);
+        $request->session()->save();
+        return response()->json([
+            'message' => 'Session value set',
+            'value' => $val,
+            'session_id' => Session::getId()
+        ]);
+    }
+
+    public function getSession(Request $request)
+    {
+        return response()->json([
+            'debug_key' => $request->session()->get('debug_key'),
+            'session_id' => Session::getId(),
+            'session_data' => $request->session()->all()
         ]);
     }
 }
