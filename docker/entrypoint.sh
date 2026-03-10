@@ -18,11 +18,13 @@ chmod -R 775 /var/www/html/storage
 chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/bootstrap/cache
 
-# Run migrations (|| true ensures the server starts even if this fails)
-php artisan migrate --force || true
+# Run migrations with visible output
+echo "=== Running migrations ==="
+php artisan migrate --force 2>&1 || echo "WARNING: Migration failed, check logs above"
 
-# Provision system records and users (|| true ensures the server starts even if this fails)
-php artisan db:seed --force || true
+# Provision system records and users
+echo "=== Running database seeder ==="
+php artisan db:seed --force 2>&1 || echo "WARNING: Seeding failed, check logs above"
 
 # Fix permissions AGAIN after migrate/seed created files as root
 chown -R www-data:www-data /var/www/html/storage

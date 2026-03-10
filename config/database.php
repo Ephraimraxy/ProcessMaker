@@ -54,7 +54,7 @@ return [
             'driver' => env('DB_DRIVER', 'mysql'),
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT'),
-            'database' => env('LANDLORD_DB_DATABASE', 'landlord'),
+            'database' => env('LANDLORD_DB_DATABASE', env('DB_DATABASE', 'processmaker')),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'unix_socket' => env('DB_SOCKET', ''),
