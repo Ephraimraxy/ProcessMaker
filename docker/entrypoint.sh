@@ -24,11 +24,15 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 777 /var/www/html/storage/logs
 
 # Clear any stale caches
-echo "=== Clearing artisan caches ==="
-php artisan config:clear || echo "Config clear failed"
-php artisan route:clear || echo "Route clear failed"
-php artisan view:clear || echo "View clear failed"
-php artisan cache:clear || echo "Cache clear failed"
+if [ "${CLEAR_CACHES_ON_BOOT:-true}" = "true" ]; then
+    echo "=== Clearing artisan caches (Auto) ==="
+    php artisan config:clear || echo "Config clear failed"
+    php artisan route:clear || echo "Route clear failed"
+    php artisan view:clear || echo "View clear failed"
+    php artisan cache:clear || echo "Cache clear failed"
+else
+    echo "=== Skipping artisan cache clearing ==="
+fi
 
 # Ensure session table exists if not already there
 echo "=== Ensuring session table ==="
