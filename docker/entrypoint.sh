@@ -32,9 +32,15 @@ php artisan cache:clear || echo "Cache clear failed"
 
 # Ensure session table exists if not already there
 echo "=== Ensuring session table ==="
-# We only want to generate the migration if it doesn't already exist in the migrations folder
-if ! ls database/migrations/*_create_sessions_table.php 1> /dev/null 2>&1; then
-    php artisan session:table || echo "Session table generation failed"
+# First check if the table exists in the DB
+table_exists=$(php artisan tinker --execute="echo Schema::hasTable('sessions') ? '1' : '0';" | tail -n 1 | tr -d '\r')
+if [ "$table_exists" = "0" ]; then
+    # Only if table doesn't exist, check migrations folder
+    if ! ls database/migrations/*_create_sessions_table.php 1> /dev/null 2>&1; then
+        php artisan session:table || echo "Session table generation failed"
+    fi
+else
+    echo "Sessions table already exists in database."
 fi
 
 # Run migrations with visible output
