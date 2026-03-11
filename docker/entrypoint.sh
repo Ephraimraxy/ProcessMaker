@@ -1,3 +1,4 @@
+#!/bin/sh
 # Aggressively clear bootstrap cache files
 echo "=== Cleaning bootstrap/cache ==="
 rm -f /var/www/html/bootstrap/cache/config.php
