@@ -30,9 +30,12 @@ php artisan route:clear || echo "Route clear failed"
 php artisan view:clear || echo "View clear failed"
 php artisan cache:clear || echo "Cache clear failed"
 
-# Ensure session table exists
+# Ensure session table exists if not already there
 echo "=== Ensuring session table ==="
-php artisan session:table || echo "Session table already exists or failed"
+# We only want to generate the migration if it doesn't already exist in the migrations folder
+if ! ls database/migrations/*_create_sessions_table.php 1> /dev/null 2>&1; then
+    php artisan session:table || echo "Session table generation failed"
+fi
 
 # Run migrations with visible output
 echo "=== Running migrations ==="
