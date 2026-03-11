@@ -19,10 +19,9 @@ mkdir -p /var/www/html/storage/logs
 mkdir -p /var/www/html/storage/framework/sessions
 mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/framework/cache
-chown -R www-data:www-data /var/www/html/storage
-chmod -R 775 /var/www/html/storage
-chown -R www-data:www-data /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 777 /var/www/html/storage/logs
 
 # Clear any stale caches
 echo "=== Clearing artisan caches ==="
@@ -30,6 +29,10 @@ php artisan config:clear || echo "Config clear failed"
 php artisan route:clear || echo "Route clear failed"
 php artisan view:clear || echo "View clear failed"
 php artisan cache:clear || echo "Cache clear failed"
+
+# Ensure session table exists
+echo "=== Ensuring session table ==="
+php artisan session:table || echo "Session table already exists or failed"
 
 # Run migrations with visible output
 echo "=== Running migrations ==="
