@@ -100,7 +100,7 @@ class LoginController extends Controller
         }
         $block = $manager->getBlock();
         // clear cookie to avoid an issue when logout SLO and then try to login with simple PM login form
-        \Cookie::queue(\Cookie::forget(config('session.cookie')));
+        // Removed aggresive forget
         // cookie required here because SSO redirect resets the session
         $cookie = cookie(
             'processmaker_intended',
