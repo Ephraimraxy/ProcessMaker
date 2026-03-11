@@ -213,19 +213,11 @@ Route::get('/debug-session', [\ProcessMaker\Http\Controllers\DebugController::cl
 Route::get('/set-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'setSession']);
 Route::get('/get-session', [\ProcessMaker\Http\Controllers\DebugController::class, 'getSession']);
 Route::get('/scan-redis', [\ProcessMaker\Http\Controllers\DebugController::class, 'scanRedis']);
-Route::get('/deep-debug', [\ProcessMaker\Http\Controllers\DebugController::class, 'deepDebug']);
-Route::get('/redis-set', [\ProcessMaker\Http\Controllers\DebugController::class, 'setRedis']);
+Route::get('/test-cookie', [\ProcessMaker\Http\Controllers\DebugController::class, 'testCookie']);
+Route::get('/test-redis', [\ProcessMaker\Http\Controllers\DebugController::class, 'testRedis']);
 Route::get('/redis-get', [\ProcessMaker\Http\Controllers\DebugController::class, 'getRedis']);
-Route::get('/redis-flush', [\ProcessMaker\Http\Controllers\DebugController::class, 'flushAll']);
+Route::get('/deep-debug', [\ProcessMaker\Http\Controllers\DebugController::class, 'deepDebug']);
 Route::get('/list-keys', [\ProcessMaker\Http\Controllers\DebugController::class, 'listRedisKeys']);
-Route::get('/test-redis', function() {
-    try {
-        Illuminate\Support\Facades\Redis::set('test_key', 'works');
-        return 'Redis works: ' . Illuminate\Support\Facades\Redis::get('test_key');
-    } catch (\Exception $e) {
-        return 'Redis error: ' . $e->getMessage();
-    }
-});
 
 Route::group([
     'middleware' => ['web', 'auth:web,anon', 'sanitize', 'bindings'],
