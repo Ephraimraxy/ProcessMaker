@@ -21,22 +21,17 @@ class DebugController extends Controller
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
             'ip' => $request->ip(),
+            'cache_driver' => \Illuminate\Support\Facades\Cache::getDefaultDriver(),
             'cache_prefix' => \Illuminate\Support\Facades\Cache::getPrefix(),
             'session_config' => [
                 'driver' => config('session.driver'),
-                'domain' => config('session.domain'),
-                'secure' => config('session.secure'),
-                'path' => config('session.path'),
-                'connection' => config('session.connection'),
                 'store' => config('session.store'),
-            ],
-            'redis_config' => [
-                'prefix' => config('database.redis.options.prefix'),
             ],
             'env_debug' => [
                 'REDIS_PREFIX' => env('REDIS_PREFIX', 'NOT_SET'),
                 'CACHE_PREFIX' => env('CACHE_PREFIX', 'NOT_SET'),
-                'APP_NAME' => env('APP_NAME'),
+                'CACHE_DRIVER' => env('CACHE_DRIVER', 'NOT_SET'),
+                'SESSION_DRIVER' => env('SESSION_DRIVER', 'NOT_SET'),
             ],
             'handler' => get_class(Session::getHandler()),
         ]);
@@ -83,22 +78,22 @@ class DebugController extends Controller
     public function scanRedis()
     {
         $results = [];
-        $originalDb = config('database.redis.default.database', 0);
+        $connections = ['default', 'cache', 'cache_settings'];
         
-        for ($i = 0; $i < 4; $i++) { // Check first 4 DBs
+        foreach ($connections as $conn) {
             try {
-                \Illuminate\Support\Facades\Redis::connection()->select($i);
-                $keys = \Illuminate\Support\Facades\Redis::connection()->keys('*');
-                $results["db_$i"] = $keys;
+                $redis = \Illuminate\Support\Facades\Redis::connection($conn);
+                for ($i = 0; $i < 4; $i++) {
+                    $redis->select($i);
+                    $keys = $redis->keys('*');
+                    if (!empty($keys)) {
+                        $results["${conn}_db_${i}"] = $keys;
+                    }
+                }
             } catch (\Exception $e) {
-                $results["error_db_$i"] = $e->getMessage();
+                $results["error_${conn}"] = $e->getMessage();
             }
         }
-        
-        // Reset to original
-        try {
-            \Illuminate\Support\Facades\Redis::connection()->select($originalDb);
-        } catch (\Exception $e) {}
 
         return response()->json($results);
     }
