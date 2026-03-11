@@ -117,6 +117,8 @@ class LoginController extends Controller
         $response = response(view($loginView, compact('addons', 'block')));
         $response->withCookie($cookie);
 
+        \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Cookie Config - Domain: ' . config('session.domain') . ' | Secure: ' . config('session.secure') . ' | SameSite: ' . config('session.same_site'));
+
         \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Showing login form. Intended URL from cookie: ' . $request->cookie('processmaker_intended') . ' | Session ID: ' . session()->getId());
         return $response;
     }
