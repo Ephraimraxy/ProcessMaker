@@ -15,24 +15,36 @@ class DebugController extends Controller
         $sessionId = Session::getId();
         $keys = Redis::keys('*' . $sessionId . '*');
         
+        $dbSessionCount = 0;
+        $dbSessionError = null;
+        try {
+            $dbSessionCount = \Illuminate\Support\Facades\DB::table('sessions')->count();
+        } catch (\Exception $e) {
+            $dbSessionError = $e->getMessage();
+        }
+
         return response()->json([
             'auth_check' => Auth::check(),
             'user' => Auth::user() ? Auth::user()->only(['id', 'username', 'email', 'status', 'is_administrator']) : null,
             'session_id' => $sessionId,
-            'found_keys' => $keys,
+            'is_request_secure' => $request->secure(),
+            'request_scheme' => $request->getScheme(),
+            'proxy_headers' => [
+                'x_forwarded_proto' => $request->header('x-forwarded-proto'),
+                'x_forwarded_host' => $request->header('x-forwarded-host'),
+            ],
+            'db_session_info' => [
+                'count' => $dbSessionCount,
+                'error' => $dbSessionError,
+            ],
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
             'ip' => $request->ip(),
             'cache_driver_runtime' => Cache::getDefaultDriver(),
-            'cache_prefix_runtime' => Cache::getPrefix(),
             'config_vs_env' => [
                 'session_driver' => ['config' => config('session.driver'), 'env' => env('SESSION_DRIVER')],
-                'session_store' => ['config' => config('session.store'), 'env' => env('SESSION_STORE')],
+                'session_secure' => ['config' => config('session.secure'), 'env' => env('SESSION_SECURE_COOKIE')],
                 'cache_driver' => ['config' => config('cache.default'), 'env' => env('CACHE_DRIVER')],
-                'cache_prefix' => ['config' => config('cache.prefix'), 'env' => env('CACHE_PREFIX')],
-                'redis_prefix' => ['config' => config('database.redis.options.prefix'), 'env' => env('REDIS_PREFIX')],
-                'redis_db' => ['config' => config('database.redis.default.database'), 'env' => env('REDIS_DB')],
-                'multitenancy' => ['config' => config('app.multitenancy'), 'env' => env('MULTITENANCY')],
             ],
             'handler' => get_class(Session::getHandler()),
         ]);
@@ -136,5 +148,21 @@ class DebugController extends Controller
             'keys' => $keys,
             'prefix' => config('database.redis.options.prefix'),
         ]);
+    }
+
+    public function forceSessionSave() {
+        try {
+            \Illuminate\Support\Facades\DB::table('sessions')->insert([
+                'id' => 'test-' . time(),
+                'user_id' => null,
+                'ip_address' => '1.1.1.1',
+                'user_agent' => 'test',
+                'payload' => 'test_string',
+                'last_activity' => time()
+            ]);
+            return 'Force insert OK. Count is now: ' . \Illuminate\Support\Facades\DB::table('sessions')->count();
+        } catch (\Exception $e) {
+            return 'Force insert FAIL: ' . $e->getMessage();
+        }
     }
 }

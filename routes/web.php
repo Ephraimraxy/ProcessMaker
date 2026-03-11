@@ -218,6 +218,7 @@ Route::get('/test-redis', [\ProcessMaker\Http\Controllers\DebugController::class
 Route::get('/redis-get', [\ProcessMaker\Http\Controllers\DebugController::class, 'getRedis']);
 Route::get('/deep-debug', [\ProcessMaker\Http\Controllers\DebugController::class, 'deepDebug']);
 Route::get('/list-keys', [\ProcessMaker\Http\Controllers\DebugController::class, 'listRedisKeys']);
+Route::get('/force-save', [\ProcessMaker\Http\Controllers\DebugController::class, 'forceSessionSave']);
 
 Route::group([
     'middleware' => ['web', 'auth:web,anon', 'sanitize', 'bindings'],
