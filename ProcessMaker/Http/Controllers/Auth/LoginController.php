@@ -338,46 +338,26 @@ class LoginController extends Controller
             $this->throwLockedLoginResponse();
         }
 
-        if ($this->attemptLogin($request)) {
+        if ($user_attempt = Auth::attempt($this->credentials($request))) {
+            \Illuminate\Support\Facades\Log::debug('DEBUG AUTH: Auth::attempt SUCCESS for ' . $request->input('username'));
             if ($request->hasSession()) {
                 $request->session()->put('auth.password_confirmed_at', time());
             }
 
             // Check if the user needs to change the password
             if ($request->filled(['SAMLRequest', 'RelayState']) && $user->force_change_password === 1) {
-                // Store the SAMLRequest and RelayState in a cookie
-                Cookie::queue(
-                    'saml_request',
-                    json_encode([
-                        'SAMLRequest' => $request->get('SAMLRequest'),
-                        'RelayState' => $request->get('RelayState'),
-                    ]),
-                    10,
-                    null,
-                    null,
-                    true,
-                    true,
-                    false,
-                    'none',
-                );
-
                 return redirect()->route('password.change');
             }
-            // Cache user permissions for a day to improve performance
-            Cache::remember("user_{$user->id}_permissions", 86400, function () use ($user) {
-                return $user->permissions()->pluck('name')->toArray();
-            });
-
-            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username);
             
+            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username);
             $this->setupLanguage($request, $user);
 
             return $this->sendLoginResponse($request);
         }
 
+        \Illuminate\Support\Facades\Log::debug('DEBUG AUTH: Auth::attempt FAILED for ' . $request->input('username') . ' - Hash match: ' . (\Illuminate\Support\Facades\Hash::check($request->input('password'), $user->password) ? 'YES' : 'NO'));
+        
         // If the login attempt was unsuccessful we will increment the number of attempts
-        // to login and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
