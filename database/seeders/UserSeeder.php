@@ -30,10 +30,14 @@ class UserSeeder extends Seeder
         $adminPass = env('ADMIN_PASSWORD', self::$INSTALLER_ADMIN_PASSWORD);
         $adminEmail = env('ADMIN_EMAIL', self::$INSTALLER_ADMIN_EMAIL);
 
-        $admin = User::where('username', $adminUser)->first() ?: new User();
+        $admin = User::where('username', $adminUser)->first();
+        if (!$admin) {
+            $admin = new User();
+            $admin->username = $adminUser;
+            $admin->password = Hash::make($adminPass);
+        }
+        
         $admin->forceFill([
-            'username' => $adminUser,
-            'password' => Hash::make($adminPass),
             'email' => $adminEmail,
             'firstname' => env('ADMIN_FIRSTNAME', self::$INSTALLER_ADMIN_FIRSTNAME),
             'lastname' => env('ADMIN_LASTNAME', self::$INSTALLER_ADMIN_LASTNAME),

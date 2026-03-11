@@ -24,13 +24,13 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 777 /var/www/html/storage/logs
 
 # Clear any stale caches
+echo "=== Aggressively cleaning bootstrap/cache ==="
+rm -f /var/www/html/bootstrap/cache/*.php
+
 if [ "$CLEAR_CACHES_ON_BOOT" = "false" ]; then
-    echo "=== Skipping artisan cache clearing ==="
+    echo "=== Skipping artisan cache commands ==="
 else
-    echo "=== Clearing artisan caches (Force) ==="
-    # Remove files first to be absolutely sure
-    rm -f /var/www/html/bootstrap/cache/*.php
-    
+    echo "=== Running artisan cache clear commands ==="
     php artisan config:clear || echo "Config clear failed"
     php artisan route:clear || echo "Route clear failed"
     php artisan view:clear || echo "View clear failed"
