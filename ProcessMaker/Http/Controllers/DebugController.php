@@ -21,17 +21,16 @@ class DebugController extends Controller
             'session_data' => Session::all(),
             'cookies' => $request->cookies->all(),
             'ip' => $request->ip(),
-            'cache_driver' => \Illuminate\Support\Facades\Cache::getDefaultDriver(),
-            'cache_prefix' => \Illuminate\Support\Facades\Cache::getPrefix(),
-            'session_config' => [
-                'driver' => config('session.driver'),
-                'store' => config('session.store'),
-            ],
-            'env_debug' => [
-                'REDIS_PREFIX' => env('REDIS_PREFIX', 'NOT_SET'),
-                'CACHE_PREFIX' => env('CACHE_PREFIX', 'NOT_SET'),
-                'CACHE_DRIVER' => env('CACHE_DRIVER', 'NOT_SET'),
-                'SESSION_DRIVER' => env('SESSION_DRIVER', 'NOT_SET'),
+            'cache_driver_runtime' => \Illuminate\Support\Facades\Cache::getDefaultDriver(),
+            'cache_prefix_runtime' => \Illuminate\Support\Facades\Cache::getPrefix(),
+            'config_vs_env' => [
+                'session_driver' => ['config' => config('session.driver'), 'env' => env('SESSION_DRIVER')],
+                'session_store' => ['config' => config('session.store'), 'env' => env('SESSION_STORE')],
+                'cache_driver' => ['config' => config('cache.default'), 'env' => env('CACHE_DRIVER')],
+                'cache_prefix' => ['config' => config('cache.prefix'), 'env' => env('CACHE_PREFIX')],
+                'redis_prefix' => ['config' => config('database.redis.options.prefix'), 'env' => env('REDIS_PREFIX')],
+                'redis_db' => ['config' => config('database.redis.default.database'), 'env' => env('REDIS_DB')],
+                'redis_host' => ['config' => config('database.redis.default.host'), 'env' => env('REDIS_HOST')],
             ],
             'handler' => get_class(Session::getHandler()),
         ]);

@@ -1,4 +1,9 @@
-#!/bin/sh
+# Aggressively clear bootstrap cache files
+echo "=== Cleaning bootstrap/cache ==="
+rm -f /var/www/html/bootstrap/cache/config.php
+rm -f /var/www/html/bootstrap/cache/routes.php
+rm -f /var/www/html/bootstrap/cache/services.php
+rm -f /var/www/html/bootstrap/cache/packages.php
 
 # Replace ${PORT} in nginx config with the actual environment variable
 if [ -z "$PORT" ]; then
@@ -19,11 +24,11 @@ chown -R www-data:www-data /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/bootstrap/cache
 
 # Clear any stale caches
-echo "=== Clearing caches ==="
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-php artisan cache:clear
+echo "=== Clearing artisan caches ==="
+php artisan config:clear || echo "Config clear failed"
+php artisan route:clear || echo "Route clear failed"
+php artisan view:clear || echo "View clear failed"
+php artisan cache:clear || echo "Cache clear failed"
 
 # Run migrations with visible output
 echo "=== Running migrations ==="
