@@ -24,14 +24,14 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 777 /var/www/html/storage/logs
 
 # Clear any stale caches
-if [ "${CLEAR_CACHES_ON_BOOT:-true}" = "true" ]; then
+if [ "$CLEAR_CACHES_ON_BOOT" = "false" ]; then
+    echo "=== Skipping artisan cache clearing ==="
+else
     echo "=== Clearing artisan caches (Auto) ==="
     php artisan config:clear || echo "Config clear failed"
     php artisan route:clear || echo "Route clear failed"
     php artisan view:clear || echo "View clear failed"
     php artisan cache:clear || echo "Cache clear failed"
-else
-    echo "=== Skipping artisan cache clearing ==="
 fi
 
 # Ensure session table exists if not already there
@@ -52,8 +52,12 @@ echo "=== Running migrations ==="
 php artisan migrate --force 2>&1 || echo "WARNING: Migration failed, check logs above"
 
 # Provision system records and users
-echo "=== Running database seeder ==="
-php artisan db:seed --force 2>&1 || echo "WARNING: Seeding failed, check logs above"
+if [ "$DB_SEED_ON_BOOT" = "false" ]; then
+    echo "=== Skipping database seeder ==="
+else
+    echo "=== Running database seeder ==="
+    php artisan db:seed --force 2>&1 || echo "WARNING: Seeding failed, check logs above"
+fi
 
 # Setup Passport OAuth keys and clients
 echo "=== Setting up Passport ==="

@@ -270,6 +270,21 @@ Route::get('/task-is-not-assigned', function () {
 // SAML Metadata Route
 Route::resource('/saml/metadata', MetadataController::class)->only('index');
 
+Route::get('/diag', function () {
+    return [
+        'auth' => auth()->check(),
+        'user' => auth()->user() ? auth()->user()->username : null,
+        'session_id' => session()->getId(),
+        'session_data' => session()->all(),
+        'cookies' => request()->cookies->all(),
+        'headers' => request()->headers->all(),
+        'secure' => request()->secure(),
+        'scheme' => request()->getScheme(),
+        'app_url' => config('app.url'),
+        'force_https' => config('app.force_https'),
+    ];
+});
+
 // Metrics Route
 Route::get('/metrics', function () {
     if (!config('app.multitenancy')) {

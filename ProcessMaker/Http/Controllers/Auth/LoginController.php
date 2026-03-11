@@ -117,10 +117,7 @@ class LoginController extends Controller
         $response = response(view($loginView, compact('addons', 'block')));
         $response->withCookie($cookie);
 
-        // Remove 'password_hash_web' from session
-        $request = request();
-        $request->session()->forget('password_hash_' . app('auth')->getDefaultDriver());
-
+        \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Showing login form. Intended URL from cookie: ' . $request->cookie('processmaker_intended') . ' | Session ID: ' . session()->getId());
         return $response;
     }
 
@@ -349,7 +346,7 @@ class LoginController extends Controller
                 return redirect()->route('password.change');
             }
             
-            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username);
+            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username . ' | New Session ID: ' . session()->getId());
             $this->setupLanguage($request, $user);
 
             return $this->sendLoginResponse($request);
