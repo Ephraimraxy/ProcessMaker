@@ -31,8 +31,12 @@ class SessionControlBlock
 
         $sessionManager = new SessionControlManager($user, $ip);
 
-        if ($user && !$hasUserSession && $sessionManager->isSessionBlocked()) {
-            return $sessionManager->redirectToLogin();
+        if ($user && !$hasUserSession) {
+            $isBlocked = $sessionManager->isSessionBlocked();
+            \Illuminate\Support\Facades\Log::debug('DEBUG SESSION_BLOCK: Found user ' . $user->username . ' - Is Blocked: ' . ($isBlocked ? 'YES' : 'NO'));
+            if ($isBlocked) {
+                return $sessionManager->redirectToLogin();
+            }
         }
 
         return $next($request);
