@@ -6,6 +6,15 @@ rm -f /var/www/html/bootstrap/cache/routes.php
 rm -f /var/www/html/bootstrap/cache/services.php
 rm -f /var/www/html/bootstrap/cache/packages.php
 
+# Diagnostics: print resolved hosts for debugging
+echo "=== Environment Diagnostics ==="
+echo "DB_HOST=$DB_HOST | DB_PORT=$DB_PORT | DB_DATABASE=$DB_DATABASE"
+echo "REDIS_HOST=$REDIS_HOST | REDIS_PORT=$REDIS_PORT"
+echo "SESSION_DRIVER=$SESSION_DRIVER | CACHE_DRIVER=$CACHE_DRIVER"
+echo "APP_URL=$APP_URL | FORCE_HTTPS=$FORCE_HTTPS"
+echo "REDIS_CLIENT=${REDIS_CLIENT:-predis}"
+
+
 # Replace ${PORT} in nginx config with the actual environment variable
 if [ -z "$PORT" ]; then
   export PORT=80
