@@ -13,6 +13,7 @@ use Prometheus\Counter;
 use Prometheus\Gauge;
 use Prometheus\Histogram;
 use Prometheus\RenderTextFormat;
+use Prometheus\Storage\InMemory;
 use Prometheus\Storage\Redis as PrometheusRedis;
 use Redis;
 use RuntimeException;
@@ -45,15 +46,24 @@ class MetricsService
             // Set up Redis as the adapter if none is provided
             if ($adapter === null) {
                 $redis = app('redis')->client();
-                $adapter = PrometheusRedis::fromExistingConnection($redis);
-                if (app()->has(Tenant::BOOTSTRAPPED_TENANT)) {
-                    $tenantInfo = app(Tenant::BOOTSTRAPPED_TENANT);
-                    $adapter->setPrefix('tenant_' . $tenantInfo['id'] . ':PROMETHEUS_');
+                // PrometheusRedis::fromExistingConnection() requires the native
+                // phpredis Redis object. When using the predis client the returned
+                // object is a Predis\Client which is incompatible, so fall back to
+                // an in-memory adapter to keep the application running.
+                if ($redis instanceof \Redis) {
+                    $adapter = PrometheusRedis::fromExistingConnection($redis);
+                    if (app()->has(Tenant::BOOTSTRAPPED_TENANT)) {
+                        $tenantInfo = app(Tenant::BOOTSTRAPPED_TENANT);
+                        $adapter->setPrefix('tenant_' . $tenantInfo['id'] . ':PROMETHEUS_');
+                    }
+                } else {
+                    $adapter = new InMemory();
                 }
             }
             $this->collectionRegistry = new CollectorRegistry($adapter);
         } catch (Exception $e) {
-            throw new RuntimeException('Error initializing the metrics adapter: ' . $e->getMessage());
+            // Fall back to in-memory so the app can still boot
+            $this->collectionRegistry = new CollectorRegistry(new InMemory());
         }
     }
 
