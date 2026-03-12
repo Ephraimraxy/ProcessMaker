@@ -273,16 +273,45 @@ Route::resource('/saml/metadata', MetadataController::class)->only('index');
 Route::get('/diag', function () {
     return [
         'auth' => auth()->check(),
-        'user' => auth()->user() ? auth()->user()->username : null,
+        'user' => auth()->user() ? [
+            'id' => auth()->user()->id,
+            'username' => auth()->user()->username,
+            'is_admin' => auth()->user()->is_administrator,
+        ] : null,
         'session_id' => session()->getId(),
         'session_data' => session()->all(),
         'cookies' => request()->cookies->all(),
-        'headers' => request()->headers->all(),
         'secure' => request()->secure(),
-        'scheme' => request()->getScheme(),
         'app_url' => config('app.url'),
         'force_https' => config('app.force_https'),
+        'links' => [
+            'force_login_admin' => url('/diag/force/1'),
+            'force_login_tester' => url('/diag/force/tester'),
+            'list_users' => url('/diag/users'),
+        ]
     ];
+});
+
+Route::get('/diag/users', function() {
+    return \ProcessMaker\Models\User::all()->map(function($u) {
+        return [
+            'id' => $u->id,
+            'username' => $u->username,
+            'status' => $u->status,
+            'is_admin' => $u->is_administrator,
+            'check_admin_pass' => \Hash::check('admin', $u->password),
+            'check_password_pass' => \Hash::check('password', $u->password),
+        ];
+    });
+});
+
+Route::get('/diag/force/{user}', function($userInput) {
+    $user = \ProcessMaker\Models\User::where('username', $userInput)->orWhere('id', $userInput)->first();
+    if ($user) {
+        Auth::login($user);
+        return redirect('/diag')->with('status', 'Logged in as ' . $user->username);
+    }
+    return "User $userInput not found";
 });
 
 // Metrics Route
