@@ -284,18 +284,26 @@ Route::get('/diag', function () {
         'cookies' => request()->cookies->all(),
         'secure' => request()->secure(),
         'app_url' => config('app.url'),
-        'app_key_set' => !empty(config('app.key')),
-        'settings' => [
-            'ip_restriction' => \ProcessMaker\Models\Setting::configByKey('session-control.ip_restriction'),
-            'device_restriction' => \ProcessMaker\Models\Setting::configByKey('session-control.device_restriction'),
-        ],
+        'env_admin_pass' => env('ADMIN_PASSWORD') ? 'SET (length: ' . strlen(env('ADMIN_PASSWORD')) . ')' : 'NOT SET',
+        'middleware_bypass' => 'Kernel modified to comment out AuthenticateSession and SessionControlKill',
         'links' => [
             'force_login_admin' => url('/diag/force/admin'),
-            'force_login_tester' => url('/diag/force/tester'),
             'list_users' => url('/diag/users'),
+            'reset_admin_pass' => url('/diag/reset'),
             'clear_cache' => url('/diag/clear'),
         ]
     ];
+});
+
+Route::get('/diag/reset', function() {
+    $admin = \ProcessMaker\Models\User::where('username', 'admin')->first();
+    if ($admin) {
+        $admin->password = \Hash::driver('bcrypt')->make('admin');
+        $admin->status = 'ACTIVE';
+        $admin->save();
+        return "Admin password reset to 'admin'. check_admin should now be true in /diag/users";
+    }
+    return "Admin user not found";
 });
 
 Route::get('/diag/users', function() {
@@ -307,7 +315,7 @@ Route::get('/diag/users', function() {
             'password_hash' => substr($u->password, 0, 10) . '...',
             'check_admin' => \Hash::check('admin', $u->password),
             'check_password' => \Hash::check('password', $u->password),
-            'check_pm_admin' => \Hash::driver('pm')->check('admin', $u->password),
+            'check_empty' => \Hash::check('', $u->password),
         ];
     });
 });

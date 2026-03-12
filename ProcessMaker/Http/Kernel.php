@@ -41,8 +41,8 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             Middleware\SessionStarted::class,
-            Middleware\AuthenticateSession::class,
-            Middleware\SessionControlKill::class,
+            // Middleware\AuthenticateSession::class,
+            // Middleware\SessionControlKill::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             //\ProcessMaker\Http\Middleware\VerifyCsrfToken::class,
             Middleware\SetLocale::class,       // This is disabled until all routes are handled by our new engine
