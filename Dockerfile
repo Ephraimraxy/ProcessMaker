@@ -1,7 +1,7 @@
 # =============================================================================
 # PHP runtime image (All JS/CSS assets are pre-built locally and committed)
 # =============================================================================
-FROM php:8.4-fpm-bookworm
+FROM php:8.3-fpm-bookworm
 
 # Install core system dependencies
 RUN apt-get update && apt-get install -y \
@@ -18,9 +18,11 @@ RUN apt-get update && apt-get install -y \
 # Install Official PHP Extension Installer
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Install PHP extensions
+# Install PHP extensions in batches to save memory
 RUN chmod +x /usr/local/bin/install-php-extensions && \
-    IPE_VERBOSE=1 IPE_GD_WITHOUTAVIF=1 install-php-extensions pdo_mysql mbstring exif pcntl bcmath intl zip gd imap redis imagick rdkafka opcache sockets
+    install-php-extensions pdo_mysql mbstring exif pcntl bcmath
+RUN IPE_GD_WITHOUTAVIF=1 install-php-extensions intl zip gd imap
+RUN install-php-extensions redis imagick rdkafka opcache sockets
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
