@@ -251,6 +251,18 @@ class LoginController extends Controller
         if (env('LOGOUT_OTHER_DEVICES', false)) {
             Auth::logoutOtherDevices($request->input('password'));
         }
+        // $this->forgetUserSession();
+
+        // The following logic is extremely fragile because it uses a hardcoded hash for the session key.
+        // If the hash doesn't match the current Laravel environment/version, it wipes the login marker.
+        /*
+        $session_data = session()->all();
+        foreach ($session_data as $key => $value) {
+            if ($key != '_token' && $key != '_previous' && $key != '_flash' && $key != 'login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d') {
+                session()->forget($key);
+            }
+        }
+        */
     }
 
     public function beforeLogout(Request $request)
@@ -265,7 +277,7 @@ class LoginController extends Controller
             Cache::forget("user_{$userId}_project_assets");
 
             // Clear the user session
-            $this->forgetUserSession();
+            // $this->forgetUserSession();
 
             // Always destroy 2fa flag
             session()->remove(TwoFactorAuthController::TFA_VALIDATED);
@@ -294,6 +306,12 @@ class LoginController extends Controller
 
     private function forgetUserSession()
     {
+        // Aggressive database session clearing can cause issues if not careful.
+        /*
+        if (config('session.driver') == 'database') {
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+        }
+        */
         $userSession = session()->get('user_session');
         $user = Auth::user();
         $user->sessions()->where('token', $userSession)->update(['is_active' => false]);
