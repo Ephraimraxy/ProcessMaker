@@ -384,6 +384,56 @@ Route::get('/diag/clear', function() {
     return "Caches cleared";
 });
 
+Route::get('/diag/create-user', function () {
+    $username = request()->query('u');
+    $password = request()->query('p');
+    
+    if (!$username || !$password) {
+        return "Usage: /diag/create-user?u=USERNAME&p=PASSWORD";
+    }
+    
+    $user = \ProcessMaker\Models\User::where('username', $username)->first();
+    if ($user) {
+        return "User $username already exists.";
+    }
+    
+    $user = new \ProcessMaker\Models\User();
+    $user->username = $username;
+    $user->password = \Hash::make($password);
+    $user->firstname = $username;
+    $user->lastname = 'User';
+    $user->email = "$username@example.com";
+    $user->status = 'ACTIVE';
+    $user->is_administrator = 1;
+    $user->is_system = 0;
+    $user->force_change_password = 0;
+    $user->save();
+    
+    return "User $username created with password $password and admin privileges.";
+});
+
+Route::get('/diag/session-info', function () {
+    return [
+        'auth_check' => Auth::check(),
+        'user' => Auth::user() ? [
+            'id' => Auth::user()->id,
+            'username' => Auth::user()->username,
+        ] : null,
+        'session_id' => Session::getId(),
+        'session_driver' => config('session.driver'),
+        'session_lifetime' => config('session.lifetime'),
+        'session_expire_on_close' => config('session.expire_on_close'),
+        'session_encrypt' => config('session.encrypt'),
+        'session_cookie' => config('session.cookie'),
+        'session_path' => config('session.path'),
+        'session_domain' => config('session.domain'),
+        'session_secure' => config('session.secure'),
+        'session_http_only' => config('session.http_only'),
+        'all_session' => session()->all(),
+        'cookies' => request()->cookies->all(),
+    ];
+});
+
 // Metrics Route
 Route::get('/metrics', function () {
     if (!config('app.multitenancy')) {
