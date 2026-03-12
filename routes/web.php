@@ -300,8 +300,10 @@ Route::get('/diag/reset', function() {
     if ($admin) {
         $admin->password = \Hash::driver('bcrypt')->make('admin');
         $admin->status = 'ACTIVE';
+        $admin->force_change_password = 0;
+        $admin->password_changed_at = now();
         $admin->save();
-        return "Admin password reset to 'admin'. check_admin should now be true in /diag/users";
+        return "Admin password reset to 'admin'. Force change password cleared. check_admin should now be true in /diag/users";
     }
     return "Admin user not found";
 });

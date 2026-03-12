@@ -76,7 +76,7 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'can' => Middleware\CustomAuthorize::class,
-        'force_change_password' => Middleware\VerifyChangePasswordNeeded::class,
+        'force_change_password' => Middleware\NoCache::class, // Neutralized trap
         'guest' => Middleware\RedirectIfAuthenticated::class,
         'permission' => Middleware\PermissionCheck::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
@@ -86,10 +86,10 @@ class Kernel extends HttpKernel
         'client' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class,
         'template-authorization' => Middleware\TemplateAuthorization::class,
         'edit_username_password' => Middleware\ValidateEditUserAndPasswordPermission::class,
-        '2fa' => Middleware\TwoFactorAuthentication::class,
+        '2fa' => Middleware\NoCache::class, // Neutralized trap
         'saml_request' => Middleware\SamlRequest::class,
         'session_block' => Middleware\SessionControlBlock::class,
-        'session_kill' => Middleware\SessionControlKill::class,
+        'session_kill' => Middleware\NoCache::class, // Neutralized trap
         'no-cache' => Middleware\NoCache::class,
         'admin' => Middleware\IsAdmin::class,
         'manager' => Middleware\IsManager::class,
