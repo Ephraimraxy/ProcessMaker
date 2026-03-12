@@ -300,6 +300,7 @@ Route::get('/diag/reset', function() {
     if ($admin) {
         $admin->password = \Hash::driver('bcrypt')->make('admin');
         $admin->status = 'ACTIVE';
+        $admin->is_system = 0; // Ensure it's not a system user
         $admin->force_change_password = 0;
         $admin->password_changed_at = now();
         $admin->save();
@@ -307,9 +308,25 @@ Route::get('/diag/reset', function() {
         // Wipe all active sessions from DB
         \Illuminate\Support\Facades\DB::table('user_sessions')->update(['is_active' => false]);
         
-        return "Admin password reset to 'admin'. Force change password cleared. ALL sessions marked inactive. check_admin should now be true in /diag/users";
+        return "Admin password reset to 'admin'. Force change password cleared. is_system set to 0. ALL sessions marked inactive. check_admin should now be true in /diag/users";
     }
     return "Admin user not found";
+});
+
+Route::get('/diag/test-auth', function() {
+    $creds = ['username' => 'admin', 'password' => 'admin'];
+    $attempt = Auth::attempt($creds);
+    $user = \ProcessMaker\Models\User::where('username', 'admin')->first();
+    
+    return [
+        'creds' => $creds,
+        'attempt_result' => $attempt,
+        'auth_check_after_attempt' => Auth::check(),
+        'user_found' => (bool)$user,
+        'user_status' => $user ? $user->status : 'N/A',
+        'hash_check' => $user ? \Hash::check('admin', $user->password) : 'N/A',
+        'session_id' => session()->getId(),
+    ];
 });
 
 Route::get('/diag/users', function() {
@@ -319,6 +336,7 @@ Route::get('/diag/users', function() {
             'username' => $u->username,
             'status' => $u->status,
             'is_admin' => $u->is_administrator,
+            'is_system' => $u->is_system ?? 'N/A',
             'force_change' => $u->force_change_password,
             'password_hash' => substr($u->password, 0, 10) . '...',
             'check_admin' => \Hash::check('admin', $u->password),
