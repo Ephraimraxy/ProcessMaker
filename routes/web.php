@@ -303,7 +303,11 @@ Route::get('/diag/reset', function() {
         $admin->force_change_password = 0;
         $admin->password_changed_at = now();
         $admin->save();
-        return "Admin password reset to 'admin'. Force change password cleared. check_admin should now be true in /diag/users";
+        
+        // Wipe all active sessions from DB
+        \Illuminate\Support\Facades\DB::table('user_sessions')->update(['is_active' => false]);
+        
+        return "Admin password reset to 'admin'. Force change password cleared. ALL sessions marked inactive. check_admin should now be true in /diag/users";
     }
     return "Admin user not found";
 });
@@ -314,12 +318,20 @@ Route::get('/diag/users', function() {
             'id' => $u->id,
             'username' => $u->username,
             'status' => $u->status,
+            'is_admin' => $u->is_administrator,
+            'force_change' => $u->force_change_password,
             'password_hash' => substr($u->password, 0, 10) . '...',
             'check_admin' => \Hash::check('admin', $u->password),
             'check_password' => \Hash::check('password', $u->password),
-            'check_empty' => \Hash::check('', $u->password),
         ];
     });
+});
+
+Route::get('/diag/sessions', function() {
+    return \Illuminate\Support\Facades\DB::table('user_sessions')
+        ->orderBy('created_at', 'desc')
+        ->limit(50)
+        ->get();
 });
 
 Route::get('/diag/force/{user}', function($userInput) {

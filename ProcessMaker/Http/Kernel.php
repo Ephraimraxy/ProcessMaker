@@ -88,7 +88,7 @@ class Kernel extends HttpKernel
         'edit_username_password' => Middleware\ValidateEditUserAndPasswordPermission::class,
         '2fa' => Middleware\NoCache::class, // Neutralized trap
         'saml_request' => Middleware\SamlRequest::class,
-        'session_block' => Middleware\SessionControlBlock::class,
+        'session_block' => Middleware\NoCache::class, // Neutralized trap
         'session_kill' => Middleware\NoCache::class, // Neutralized trap
         'no-cache' => Middleware\NoCache::class,
         'admin' => Middleware\IsAdmin::class,
