@@ -10,7 +10,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-bcmath": "*",
         "ext-exif": "*",
         "ext-gd": "*",
@@ -239,7 +239,7 @@
             "tbachert/spi": true
         },
         "platform": {
-            "php": "8.3.31"
+            "php": "8.4.3"
         },
         "audit": {
             "ignore": [

@@ -1,7 +1,7 @@
 # =============================================================================
 # PHP runtime image (All JS/CSS assets are pre-built locally and committed)
 # =============================================================================
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 # Install core system dependencies
 RUN apt-get update && apt-get install -y \
