@@ -34,11 +34,9 @@ class UserSeeder extends Seeder
         if (!$admin) {
             $admin = new User();
             $admin->username = $adminUser;
-            $admin->password = Hash::make($adminPass);
+            $admin->password = Hash::driver('bcrypt')->make($adminPass);
         } elseif (!Hash::check($adminPass, $admin->password)) {
-            // Only update password if it doesn't match the environment variable
-            // This prevents session invalidation on every boot if the password is the same
-            $admin->password = Hash::make($adminPass);
+            $admin->password = Hash::driver('bcrypt')->make($adminPass);
         }
         
         $admin->forceFill([
@@ -59,9 +57,9 @@ class UserSeeder extends Seeder
         if (!$user) {
             $user = new User();
             $user->username = $regUser;
-            $user->password = Hash::make($regPass);
+            $user->password = Hash::driver('bcrypt')->make($regPass);
         } elseif (!Hash::check($regPass, $user->password)) {
-            $user->password = Hash::make($regPass);
+            $user->password = Hash::driver('bcrypt')->make($regPass);
         }
 
         $user->forceFill([
