@@ -92,6 +92,25 @@ Route::get('/diag/force-login', function() {
 
 
 
+Route::get('/diag/debug-auth', function() {
+    return [
+        'check' => Auth::check(),
+        'user' => Auth::user(),
+        'id' => Auth::id(),
+        'session_id' => session()->getId(),
+        'session_all' => session()->all(),
+        'guard' => Auth::getDefaultDriver(),
+    ];
+});
+
+Route::get('/diag/whoami', function() {
+    if (Auth::check()) {
+        return "Logged in as: " . Auth::user()->username . " (ID: " . Auth::id() . ")";
+    }
+    return "Not logged in. Session ID: " . session()->getId();
+});
+
+
 Route::middleware('auth', 'session_kill', 'sanitize', 'force_change_password', '2fa')->group(function () {
     // Routes related to Authentication (password reset, etc)
     // Auth::routes();
