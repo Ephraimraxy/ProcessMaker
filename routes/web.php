@@ -114,6 +114,10 @@ Route::get('/diag/debug-auth', function() {
             'all' => session()->all(),
             'lifetime' => config('session.lifetime'),
             'expire_on_close' => config('session.expire_on_close'),
+            'permissions_check' => [
+                'session_permissions' => session('permissions'),
+                'live_permissions' => Auth::check() ? Auth::user()->loadPermissions() : 'Not Logged In',
+            ],
         ],
         'request' => [
             'cookies' => request()->cookies->all(),
