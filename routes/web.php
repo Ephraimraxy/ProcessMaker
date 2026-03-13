@@ -87,7 +87,55 @@ Route::get('/diag/force-login', function() {
         'status' => 'Logged in as Admin',
         'session_id' => session()->getId(),
         'user_id' => Auth::id(),
-        'redirect' => redirect()->intended('/')->getTargetUrl()
+    ];
+});
+
+
+
+Route::get('/diag/restore-admin', function() {
+    $admin = \ProcessMaker\Models\User::where('username', 'admin')->first();
+    if (!$admin) return 'Admin user not found';
+    
+    // 1. Ensure "Administrators" group exists
+    $group = \ProcessMaker\Models\Group::firstOrCreate(
+        ['name' => 'Administrators'],
+        ['status' => 'ACTIVE', 'description' => 'System Administrators Group']
+    );
+    
+    // 2. Fetch all permissions
+    $allPerms = \ProcessMaker\Models\Permission::all();
+    if ($allPerms->isEmpty()) return 'No permissions found in system';
+    
+    // 3. Sync permissions to group
+    $group->permissions()->sync($allPerms->pluck('id'));
+    
+    // 4. Add user to group
+    $exists = \ProcessMaker\Models\GroupMember::where([
+        'group_id' => $group->id,
+        'member_id' => $admin->id,
+        'member_type' => get_class($admin)
+    ])->exists();
+    
+    if (!$exists) {
+        \ProcessMaker\Models\GroupMember::create([
+            'group_id' => $group->id,
+            'member_id' => $admin->id,
+            'member_type' => get_class($admin)
+        ]);
+    }
+    
+    // 5. Sync direct permissions
+    $admin->permissions()->sync($allPerms->pluck('id'));
+    
+    // 6. Invalidate cache
+    $admin->invalidatePermissionCache();
+    
+    return [
+        'status' => 'Admin rights restored',
+        'user' => $admin->username,
+        'group' => $group->name,
+        'permissions_count' => $allPerms->count(),
+        'debug_auth_link' => url('/diag/debug-auth')
     ];
 });
 
