@@ -93,6 +93,12 @@ Route::get('/diag/force-login', function() {
 
 
 
+Route::get('/diag/set-cookie', function() {
+    return response('Cookie Set')
+        ->cookie('diag_test', 'working', 60, '/', null, false, false, false, 'lax');
+});
+
+
 Route::get('/diag/debug-auth', function() {
     return [
         'info' => 'Hyper-detailed Auth Debug',
