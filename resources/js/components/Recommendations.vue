@@ -142,6 +142,9 @@ export default {
   },
   methods: {
     listenForTaskListUpdates() {
+      if (!window.Echo) {
+        return;
+      }
       const channel = `ProcessMaker.Models.User.${window.ProcessMaker?.user?.id}`;
       const event = ".TasksUpdated";
       window.Echo.private(channel).listen(
