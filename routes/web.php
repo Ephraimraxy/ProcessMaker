@@ -104,7 +104,8 @@ Route::get('/diag/debug-auth', function() {
         'info' => 'Hyper-detailed Auth Debug',
         'auth' => [
             'check' => Auth::check(),
-            'user' => Auth::user() ? Auth::user()->only(['id', 'username', 'email']) : null,
+            'user' => Auth::user() ? Auth::user()->only(['id', 'username', 'email', 'is_administrator']) : null,
+            'can_view_dashboard' => Auth::check() ? Auth::user()->can('view-dashboard') : false,
             'id' => Auth::id(),
             'guard' => Auth::getDefaultDriver(),
         ],
