@@ -366,10 +366,12 @@ class LoginController extends Controller
                 return redirect()->route('password.change');
             }
             
-            \Illuminate\Support\Facades\Log::debug('DEBUG LOGIN: Authenticated user ' . $user->username . ' | New Session ID: ' . session()->getId());
             $this->setupLanguage($request, $user);
-
-            return $this->sendLoginResponse($request);
+            if ($request->hasSession()) {
+                $request->session()->put('login_verified', true);
+                $request->session()->save();
+            }
+            return $this->pmSendLoginResponse($request);
         }
 
         \Illuminate\Support\Facades\Log::debug('DEBUG AUTH: Auth::attempt FAILED for ' . $request->input('username') . ' - Hash match: ' . (\Illuminate\Support\Facades\Hash::check($request->input('password'), $user->password) ? 'YES' : 'NO'));
@@ -378,6 +380,22 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    protected function pmSendLoginResponse(Request $request)
+    {
+        // Skip regenerate() for debugging session drop
+        // $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        if ($response = $this->authenticated($request, $this->guard()->user())) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+                    ? new \Illuminate\Http\JsonResponse([], 204)
+                    : redirect()->intended($this->redirectPath());
     }
 
     /**

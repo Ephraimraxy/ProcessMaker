@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use ProcessMaker\Facades\Metrics;
+
 use ProcessMaker\Http\Controllers\AboutController;
 use ProcessMaker\Http\Controllers\Admin\AuthClientController;
 use ProcessMaker\Http\Controllers\Admin\CssOverrideController;
@@ -47,6 +48,28 @@ use ProcessMaker\Http\Middleware\NoCache;
 Route::get('storage/{path}', [StorageController::class, 'serve'])
     ->where('path', '.*')  // Allow any characters including slashes for nested paths
     ->name('storage.serve');
+
+Route::get('/diag/db-sessions', function() {
+    $sessions = \Illuminate\Support\Facades\DB::table('sessions')
+        ->orderBy('last_activity', 'desc')
+        ->limit(20)
+        ->get();
+        
+    return $sessions->map(function($s) {
+        $payload = @unserialize(@base64_decode($s->payload));
+        return [
+            'id' => $s->id,
+            'user_id' => $s->user_id,
+            'ip' => $s->ip_address,
+            'last_active' => date('Y-m-d H:i:s', $s->last_activity),
+            'payload_keys' => $payload ? array_keys($payload) : [],
+            'auth_keys' => $payload ? array_filter(array_keys($payload), function($k) {
+                return strpos($k, 'login_web_') === 0;
+            }) : [],
+        ];
+    });
+});
+
 
 Route::middleware('auth', 'session_kill', 'sanitize', 'force_change_password', '2fa')->group(function () {
     // Routes related to Authentication (password reset, etc)
@@ -351,6 +374,7 @@ Route::get('/diag/sessions', function() {
         ->limit(50)
         ->get();
 });
+
 
 Route::get('/diag/force/{user}', function($userInput) {
     $user = \ProcessMaker\Models\User::where('username', $userInput)->orWhere('id', $userInput)->first();
