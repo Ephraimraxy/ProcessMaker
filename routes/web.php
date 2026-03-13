@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use ProcessMaker\Facades\Metrics;
 
 use ProcessMaker\Http\Controllers\AboutController;
@@ -94,14 +95,35 @@ Route::get('/diag/force-login', function() {
 
 Route::get('/diag/debug-auth', function() {
     return [
-        'check' => Auth::check(),
-        'user' => Auth::user(),
-        'id' => Auth::id(),
-        'session_id' => session()->getId(),
-        'session_all' => session()->all(),
-        'guard' => Auth::getDefaultDriver(),
+        'info' => 'Hyper-detailed Auth Debug',
+        'auth' => [
+            'check' => Auth::check(),
+            'user' => Auth::user() ? Auth::user()->only(['id', 'username', 'email']) : null,
+            'id' => Auth::id(),
+            'guard' => Auth::getDefaultDriver(),
+        ],
+        'session' => [
+            'id' => session()->getId(),
+            'driver' => config('session.driver'),
+            'all' => session()->all(),
+            'lifetime' => config('session.lifetime'),
+            'expire_on_close' => config('session.expire_on_close'),
+        ],
+        'request' => [
+            'cookies' => request()->cookies->all(),
+            'headers' => collect(request()->headers->all())->map(function($v) { return $v[0]; }),
+            'ip' => request()->ip(),
+            'proto' => request()->header('X-Forwarded-Proto'),
+            'secure' => request()->isSecure(),
+        ],
+        'config' => [
+            'app_url' => config('app.url'),
+            'session_domain' => config('session.domain'),
+            'session_secure' => config('session.secure'),
+        ]
     ];
 });
+
 
 Route::get('/diag/whoami', function() {
     if (Auth::check()) {
