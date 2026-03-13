@@ -108,6 +108,10 @@ Route::get('/diag/debug-auth', function() {
             'can_view_dashboard' => Auth::check() ? Auth::user()->can('view-dashboard') : false,
             'id' => Auth::id(),
             'guard' => Auth::getDefaultDriver(),
+            'direct_permissions' => Auth::check() ? Auth::user()->permissions()->pluck('name')->toArray() : [],
+            'groups' => Auth::check() ? Auth::user()->groupMembersFromMemberable->map(function($gm) { 
+                return ['id' => $gm->group->id, 'name' => $gm->group->name]; 
+            }) : [],
         ],
         'session' => [
             'id' => session()->getId(),
