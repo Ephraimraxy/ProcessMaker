@@ -373,6 +373,15 @@ trait TaskControllerIndexMethods
 
     private function applyForCurrentUser($query, $user)
     {
+        if ($user->is_administrator && !request()->boolean('all_tasks') && !request()->filled('pmql') && !request()->filled('filter')) {
+            $query->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhereIn('id', $user->availableSelfServiceTasksQuery());
+            });
+
+            return $query;
+        }
+
         if ($user->is_administrator) {
             return $query;
         }

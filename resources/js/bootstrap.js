@@ -284,7 +284,7 @@ window.ProcessMaker.apiClient.interceptors.request.use((config) => {
 });
 
 // Set the default API timeout
-let apiTimeout = 5000;
+let apiTimeout = 30000;
 if (window.Processmaker && window.Processmaker.apiTimeout !== undefined) {
   apiTimeout = window.Processmaker.apiTimeout;
 }
