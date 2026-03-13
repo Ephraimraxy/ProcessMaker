@@ -135,7 +135,13 @@
 <script src="{{ mix('js/vue-vendor.js') }}"></script>
 <script src="{{ mix('js/bootstrap-vendor.js') }}"></script>
 <script src="{{ mix('js/modeler-vendor.js') }}"></script>
-<script src="{{ mix('js/fortawesome-vendor.js') }}"></script>
+@php
+    $manifestPath = public_path('mix-manifest.json');
+    $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : [];
+@endphp
+@if(isset($manifest['/js/fortawesome-vendor.js']))
+    <script src="{{ mix('js/fortawesome-vendor.js') }}"></script>
+@endif
 <script src="{{ mix('js/app.js') }}"></script>
 <script>
   window.ProcessMaker.packages = @json(\App::make(ProcessMaker\Managers\PackageManager::class)->listPackages());
