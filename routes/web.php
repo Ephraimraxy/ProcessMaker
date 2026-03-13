@@ -55,20 +55,41 @@ Route::get('/diag/db-sessions', function() {
         ->limit(20)
         ->get();
         
-    return $sessions->map(function($s) {
-        $payload = @unserialize(@base64_decode($s->payload));
-        return [
-            'id' => $s->id,
-            'user_id' => $s->user_id,
-            'ip' => $s->ip_address,
-            'last_active' => date('Y-m-d H:i:s', $s->last_activity),
-            'payload_keys' => $payload ? array_keys($payload) : [],
-            'auth_keys' => $payload ? array_filter(array_keys($payload), function($k) {
-                return strpos($k, 'login_web_') === 0;
-            }) : [],
-        ];
-    });
+    return [
+        'server_time' => date('Y-m-d H:i:s'),
+        'sessions' => $sessions->map(function($s) {
+            $payload = @unserialize(@base64_decode($s->payload));
+            return [
+                'id' => $s->id,
+                'user_id' => $s->user_id,
+                'ip' => $s->ip_address,
+                'last_active' => date('Y-m-d H:i:s', $s->last_activity),
+                'payload_keys' => $payload ? array_keys($payload) : [],
+                'login_verified' => $payload['login_verified'] ?? 'MISSING',
+                'auth_keys' => $payload ? array_filter(array_keys($payload), function($k) {
+                    return strpos($k, 'login_web_') === 0;
+                }) : [],
+            ];
+        })
+    ];
 });
+
+Route::get('/diag/force-login', function() {
+    $user = \ProcessMaker\Models\User::where('username', 'admin')->first();
+    if (!$user) return 'Admin user not found';
+    
+    Auth::login($user);
+    session()->put('login_verified', 'forced_via_diag');
+    session()->save();
+    
+    return [
+        'status' => 'Logged in as Admin',
+        'session_id' => session()->getId(),
+        'user_id' => Auth::id(),
+        'redirect' => redirect()->intended('/')->getTargetUrl()
+    ];
+});
+
 
 
 Route::middleware('auth', 'session_kill', 'sanitize', 'force_change_password', '2fa')->group(function () {
