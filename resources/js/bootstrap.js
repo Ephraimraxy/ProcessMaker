@@ -350,6 +350,22 @@ if (window.Processmaker && window.Processmaker.broadcasting) {
   window.Echo = new TenantAwareEcho(config);
 }
 
+// Global Echo fallback to prevent crashes in unguarded components/mixins
+if (!window.Echo) {
+  window.Echo = {
+    private: () => ({
+      listen: () => ({ listen: () => {}, notification: () => {} }),
+      notification: () => ({ listen: () => {}, notification: () => {} }),
+      stopListening: () => {},
+    }),
+    channel: () => ({
+      listen: () => ({ listen: () => {}, notification: () => {} }),
+      stopListening: () => {},
+    }),
+    listen: () => {},
+  };
+}
+
 if (userID) {
   const timeoutScript = document.head.querySelector("meta[name=\"timeout-worker\"]")?.content;
   const accountTimeoutLength = parseInt(eval(document.head.querySelector("meta[name=\"timeout-length\"]")?.content));
