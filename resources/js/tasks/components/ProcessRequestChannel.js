@@ -39,6 +39,9 @@ export default {
         channel,
         event,
       });
+      if (!window.Echo) {
+        return;
+      }
       window.Echo.private(channel).listen(
         event,
         callback,
@@ -58,7 +61,9 @@ export default {
   },
   destroyed() {
     this.socketListeners.forEach((element) => {
-      window.Echo.private(element.channel).stopListening(element.event);
+      if (window.Echo) {
+        window.Echo.private(element.channel).stopListening(element.event);
+      }
     });
   },
 };

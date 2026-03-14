@@ -520,8 +520,9 @@ export const initSessionSync = ({
   };
 
   if (Echo) {
-    Echo.private(`ProcessMaker.Models.User.${userId}`)
-      .notification((token) => {
+    const channel = Echo.private(`ProcessMaker.Models.User.${userId}`);
+    if (channel) {
+      channel.notification((token) => {
         if (typeof pushNotification === "function") {
           pushNotification(token);
         }
@@ -569,6 +570,7 @@ export const initSessionSync = ({
           alert(e.message, "warning");
         }
       });
+    }
   }
 
   return {

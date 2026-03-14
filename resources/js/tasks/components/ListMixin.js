@@ -8,6 +8,9 @@ const ListMixin = {
     // Reload the task list when tasks are updated in the backend
     const channel = `ProcessMaker.Models.User.${window.ProcessMaker?.user?.id}`;
     const event = ".TasksUpdated";
+    if (!window.Echo) {
+      return;
+    }
     window.Echo.private(channel).listen(event, () => {
       this.fetch();
     });
