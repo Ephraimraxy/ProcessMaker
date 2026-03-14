@@ -372,9 +372,9 @@
     "/js/processes/modeler/process-map.js": "/js/processes/modeler/process-map.js",
     "/js/processes/modeler/initialLoad.js": "/js/processes/modeler/initialLoad.js",
     "/js/processes/modeler/manifest.js": "/js/processes/modeler/manifest.js",
-    "/js/bootstrap-vendor.js": "/js/bootstrap-vendor.js",
-    "/js/vue-vendor.js": "/js/vue-vendor.js",
-    "/js/modeler-vendor.js": "/js/modeler-vendor.js",
+    "/js/bootstrap-vendor.js": "/js/bootstrap-vendor.js?id=4f01b1d68e68db594652857be965a7db",
+    "/js/vue-vendor.js": "/js/vue-vendor.js?id=bd8ba9bb1e6a35a8e9d4e965deaa67e0",
+    "/js/modeler-vendor.js": "/js/modeler-vendor.js?id=5c78a88cb90589a94b491ff74b021c19",
     "/js/admin/auth/passwords/change.js": "/js/admin/auth/passwords/change.js",
     "/js/admin/settings/index.js": "/js/admin/settings/index.js",
     "/js/admin/settings/ldaplogs.js": "/js/admin/settings/ldaplogs.js",
@@ -424,7 +424,7 @@
     "/js/composition/cases/casesDetail/edit.js": "/js/composition/cases/casesDetail/edit.js",
     "/js/processes/translations/import.js": "/js/processes/translations/import.js",
     "/js/processes-catalogue/index.js": "/js/processes-catalogue/index.js",
-    "/js/tasks/index.js": "/js/tasks/index.js",
+    "/js/tasks/index.js": "/js/tasks/index.js?id=2d18c7f0f01bb921f730aecd260c0795",
     "/js/tasks/mobile.js": "/js/tasks/mobile.js",
     "/js/tasks/show.js": "/js/tasks/show.js",
     "/js/tasks/router.js": "/js/tasks/router.js",
@@ -440,7 +440,7 @@
     "/js/tasks/loaderEdit.js": "/js/tasks/loaderEdit.js",
     "/js/tasks/edit.js": "/js/tasks/edit.js",
     "/js/tasks/preview.js": "/js/tasks/preview.js",
-    "/js/app.js": "/js/app.js",
+    "/js/app.js": "/js/app.js?id=ab368173eca9e002adf52a7294d36bf0",
     "/vendor/monaco-editor/min/vs/loader.js": "/vendor/monaco-editor/min/vs/loader.js?id=b5f2909d442d1f3c9b36662cc2829722",
     "/vendor/monaco-editor/min/vs/editor/editor.main.js": "/vendor/monaco-editor/min/vs/editor/editor.main.js?id=929167c608df8f296af777b9b3f26ebe",
     "/vendor/monaco-editor/min/vs/editor/editor.main.css": "/vendor/monaco-editor/min/vs/editor/editor.main.css?id=50ee9b1189d827996acf5fe52377f15f",
@@ -476,5 +476,6 @@
     "/js/translations/index.js": "/js/translations/index.js?id=cf61ade071264a75dca14bfdabf63030",
     "/builds/login/js/app-login.js": "/builds/login/js/app-login.js?id=9b165ac318709ca7d3df3fc9976db684",
     "/builds/login/js/manifest.js": "/builds/login/js/manifest.js?id=a51cb8e5d89de092af0950757ee0c1f3",
-    "/builds/login/js/vendor.js": "/builds/login/js/vendor.js?id=c0429a6bb0d1913040e8e98e003cfe2d"
+    "/builds/login/js/vendor.js": "/builds/login/js/vendor.js?id=c0429a6bb0d1913040e8e98e003cfe2d",
+    "/js/tasks/manifest.js": "/js/tasks/manifest.js?id=ae4d23a73e71be7db29a4995f883cf7b"
 }
