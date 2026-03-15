@@ -46,6 +46,16 @@
     <link href="/css/bpmn-symbols/css/bpmn.css" rel="stylesheet">
     @yield('css')
     <script type="text/javascript">
+    // Definitive Global Echo Fallback (Immediate execution)
+    if (!window.Echo) {
+      window.Echo = {
+        private: function() { return { listen: function() { return this; }, notification: function() { return this; }, stopListening: function() {} }; },
+        channel: function() { return { listen: function() { return this; }, stopListening: function() {} }; },
+        listen: function() {},
+        stopListening: function() {}
+      };
+    }
+
     @if(Auth::user())
       window.Processmaker = {
         csrfToken: "{{csrf_token()}}",

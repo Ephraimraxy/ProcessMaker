@@ -40,23 +40,6 @@ window.__ = translator;
 window._ = require("lodash");
 window.Popper = require("popper.js").default;
 
-// Global Echo fallback to prevent crashes in unguarded components/mixins
-// This must be defined BEFORE any components that use window.Echo are loaded.
-if (!window.Echo) {
-  window.Echo = {
-    private: () => ({
-      listen: () => ({ listen: () => {}, notification: () => {} }),
-      notification: () => ({ listen: () => {}, notification: () => {} }),
-      stopListening: () => {},
-    }),
-    channel: () => ({
-      listen: () => ({ listen: () => {}, notification: () => {} }),
-      stopListening: () => {},
-    }),
-    listen: () => {},
-  };
-}
-
 /**
  * Give node plugins access to our custom screen builder components
  */
