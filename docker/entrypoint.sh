@@ -126,6 +126,13 @@ if (DB::table('oauth_clients')->where('password_client', 1)->count() === 0) {
 # Fix permissions AGAIN after migrate/seed created files as root
 chown -R www-data:www-data /var/www/html/storage
 chmod -R 775 /var/www/html/storage
+# Harden OAuth keys as requested
+if [ -f /var/www/html/storage/oauth-public.key ]; then
+    chmod 600 /var/www/html/storage/oauth-public.key
+fi
+if [ -f /var/www/html/storage/oauth-private.key ]; then
+    chmod 600 /var/www/html/storage/oauth-private.key
+fi
 
 # Start Supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
