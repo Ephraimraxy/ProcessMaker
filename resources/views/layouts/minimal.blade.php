@@ -9,6 +9,17 @@
     <meta name="is-prod" content="{{ config('app.env') == 'production' ? 'true' : 'false' }}">
     <meta name="i18n-mdate" content='{!! json_encode(ProcessMaker\i18nHelper::mdates()) !!}'>
     @include('layouts.common-meta')
+    <script type="text/javascript">
+      // Definitive Global Echo Fallback (Immediate execution)
+      if (typeof window !== 'undefined' && !window.Echo) {
+        window.Echo = {
+          private: function() { return { listen: function() { return this; }, notification: function() { return this; }, stopListening: function() {} }; },
+          channel: function() { return { listen: function() { return this; }, stopListening: function() {} }; },
+          listen: function() {},
+          stopListening: function() {}
+        };
+      }
+    </script>
     <title>@yield('title',__('Welcome')) - {{ __('ProcessMaker') }}</title>
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ \ProcessMaker\Models\Setting::getFavicon() }}">
