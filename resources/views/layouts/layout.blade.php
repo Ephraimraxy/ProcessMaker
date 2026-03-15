@@ -40,22 +40,26 @@
     @include('layouts.common-meta')
     <title>@yield('title',__('Welcome')) - {{ __('ProcessMaker') }}</title>
     <link rel="icon" type="image/png" sizes="16x16" href="{{ \ProcessMaker\Models\Setting::getFavicon() }}">
+    
+    <script type="text/javascript">
+      // Definitive Global Echo Fallback (Immediate execution)
+      // This is isolated in its own tag to prevent interference from subsequent script errors.
+      if (typeof window !== 'undefined' && !window.Echo) {
+        window.Echo = {
+          private: function() { return { listen: function() { return this; }, notification: function() { return this; }, stopListening: function() {} }; },
+          channel: function() { return { listen: function() { return this; }, stopListening: function() {} }; },
+          listen: function() {},
+          stopListening: function() {}
+        };
+      }
+    </script>
+
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link href="{{ mix('css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ mix('css/tailwind.css') }}" rel="stylesheet">
     <link href="/css/bpmn-symbols/css/bpmn.css" rel="stylesheet">
     @yield('css')
     <script type="text/javascript">
-    // Definitive Global Echo Fallback (Immediate execution)
-    if (!window.Echo) {
-      window.Echo = {
-        private: function() { return { listen: function() { return this; }, notification: function() { return this; }, stopListening: function() {} }; },
-        channel: function() { return { listen: function() { return this; }, stopListening: function() {} }; },
-        listen: function() {},
-        stopListening: function() {}
-      };
-    }
-
     @if(Auth::user())
       window.Processmaker = {
         csrfToken: "{{csrf_token()}}",
